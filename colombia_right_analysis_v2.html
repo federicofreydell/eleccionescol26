@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colombia 2026: La Derecha y Paloma Valencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: #dddbd3;
+    --border2: #cccac0;
+    --text: #1a1916;
+    --text2: #5a5852;
+    --text3: #9a9890;
+    --sn: #d4470a;
+    --cr: #c9920a;
+    --cons: #1a7a4a;
+    --cd: #1a5ab8;
+    --paloma: #b01870;
+    --accent: #2a2a22;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px 16px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .header-left h1 em { color: var(--paloma); font-style: italic; }
+  .header-left p {
+    color: var(--text3);
+    font-size: 0.72rem;
+    margin-top: 4px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  /* TOTALS BAR */
+  .totals-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    overflow-x: auto;
+  }
+  .total-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    border-right: 1px solid var(--border);
+    cursor: default;
+    flex-shrink: 0;
+  }
+  .total-pill:first-child { padding-left: 0; }
+  .pill-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .pill-name { font-size: 0.69rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text2); }
+  .pill-votes { font-size: 0.9rem; font-weight: 700; letter-spacing: -0.02em; }
+  .pill-pct { font-size: 0.67rem; color: var(--text3); font-weight: 500; }
+
+  /* MAIN LAYOUT */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    height: calc(100vh - 116px);
+  }
+
+  /* MAP PANEL */
+  .map-panel { position: relative; border-right: 1px solid var(--border); overflow: hidden; }
+
+  .map-controls {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .map-mode-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .map-mode-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    padding: 5px 10px 4px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    font-weight: 600;
+  }
+  .map-mode-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 0.72rem;
+    padding: 7px 11px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.1s;
+    font-weight: 400;
+  }
+  .map-mode-btn:last-child { border-bottom: none; }
+  .map-mode-btn:hover { background: var(--surface2); color: var(--text); }
+  .map-mode-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
+
+  .map-legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    z-index: 10;
+    min-width: 172px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .legend-title { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 7px; font-weight: 600; }
+  .legend-item { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
+  .legend-swatch { width: 22px; height: 9px; border-radius: 2px; }
+  .legend-text { font-size: 0.67rem; color: var(--text2); }
+
+  #map { width: 100%; height: 100%; display: block; }
+
+  /* TOOLTIP */
+  #tooltip {
+    position: fixed; display: none;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    pointer-events: none; z-index: 1000;
+    max-width: 228px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+  }
+  .tt-name { font-weight: 700; font-size: 0.88rem; }
+  .tt-dept { font-size: 0.67rem; color: var(--text3); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tt-row { display: flex; justify-content: space-between; align-items: center; margin: 2px 0; gap: 14px; }
+  .tt-label { font-size: 0.7rem; color: var(--text2); display: flex; align-items: center; gap: 5px; }
+  .tt-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .tt-val { font-size: 0.74rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tt-divider { border: none; border-top: 1px solid var(--border); margin: 7px 0; }
+  .tt-highlight { background: var(--surface2); border-radius: 4px; padding: 5px 7px; margin-top: 5px; }
+
+  /* SIDE PANEL */
+  .side-panel { display: flex; flex-direction: column; overflow-y: auto; background: var(--surface); }
+  .side-section { padding: 18px 20px; border-bottom: 1px solid var(--border); }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin-bottom: 13px;
+    color: var(--text);
+  }
+
+  /* SUMMARY BOXES */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .summary-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 11px;
+  }
+  .summary-box-label { font-size: 0.63rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 3px; font-weight: 600; }
+  .summary-box-num { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .summary-box-sub { font-size: 0.67rem; color: var(--text2); margin-top: 3px; line-height: 1.3; }
+
+  /* NATIONAL BAR */
+  .nat-bar-wrap { margin-bottom: 5px; }
+  .nat-bar-label { display: flex; justify-content: space-between; font-size: 0.67rem; color: var(--text3); margin-bottom: 3px; }
+  .nat-bar { height: 9px; background: var(--surface2); border-radius: 2px; overflow: hidden; display: flex; }
+  .nat-bar-seg { height: 100%; }
+
+  /* DEPT CHART */
+  .tab-group { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 13px; }
+  .tab-btn {
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--text3); font-size: 0.67rem; font-family: 'Inter', sans-serif;
+    padding: 5px 10px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+    transition: all 0.1s; margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+
+  .dept-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .dept-name { width: 118px; font-size: 0.68rem; color: var(--text2); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dept-bar-wrap { flex: 1; }
+  .dept-bar-inner { height: 7px; border-radius: 1px; min-width: 2px; }
+  .dept-val { font-size: 0.65rem; color: var(--text3); width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  /* TOP MUNIS */
+  .muni-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .muni-row:last-child { border-bottom: none; }
+  .muni-name { font-size: 0.75rem; font-weight: 500; }
+  .muni-sub { font-size: 0.64rem; color: var(--text3); margin-top: 1px; }
+  .muni-diff { font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* ANALYSIS */
+  .analysis-text { font-size: 0.74rem; color: var(--text2); line-height: 1.65; }
+  .analysis-text strong { color: var(--text); font-weight: 600; }
+  .corr-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .corr-bar-bg { flex: 1; height: 6px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .corr-bar-fill { height: 100%; border-radius: 2px; }
+  .corr-label { font-size: 0.67rem; width: 90px; color: var(--text2); display: flex; align-items: center; gap: 4px; }
+  .corr-val { font-size: 0.67rem; width: 32px; text-align: right; font-weight: 600; color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>La derecha más allá de <em>Paloma Valencia</em></h1>
+    <p>Elecciones Colombia 2026 · Senado vs. Consulta Interpartidista · Preconteo CNE</p>
+  </div>
+</header>
+
+<div class="totals-bar" id="totalsBar"></div>
+
+<div class="main-layout">
+  <div class="map-panel">
+    <div class="map-controls">
+      <div class="map-mode-group">
+        <div class="map-mode-label">Vista del mapa</div>
+        <button class="map-mode-btn active" data-mode="cd_gap" onclick="setMapMode('cd_gap',this)">CD vs. Paloma (ratio)</button>
+        <button class="map-mode-btn" data-mode="sn_share" onclick="setMapMode('sn_share',this)">Fuerza de Salvación Nacional</button>
+        <button class="map-mode-btn" data-mode="paloma_pct" onclick="setMapMode('paloma_pct',this)">Paloma % de la derecha</button>
+        <button class="map-mode-btn" data-mode="right_gap" onclick="setMapMode('right_gap',this)">Derecha no-Paloma (volumen)</button>
+      </div>
+    </div>
+    <div class="map-legend" id="mapLegend"></div>
+    <svg id="map"></svg>
+    <div id="tooltip"></div>
+  </div>
+
+  <div class="side-panel">
+
+    <div class="side-section">
+      <div class="section-title">Resumen nacional</div>
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="summary-box-label">Paloma vs. CD</div>
+          <div class="summary-box-num" style="color:var(--paloma)">+6.6%</div>
+          <div class="summary-box-sub">Paloma supera al CD por ~200k votos</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-box-label">SN vs. Paloma</div>
+          <div class="summary-box-num" style="color:var(--sn)">÷4.6×</div>
+          <div class="summary-box-sub">Paloma saca 4.6 votos por cada 1 del SN</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-box-label">Derecha no-Paloma</div>
+          <div class="summary-box-num" style="color:var(--cons)">3.32M</div>
+          <div class="summary-box-sub">Votos de los 4 partidos fuera de la consulta</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-box-label">CD supera Paloma</div>
+          <div class="summary-box-num" style="color:var(--cd)">330</div>
+          <div class="summary-box-sub">municipios donde el CD > Paloma</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <div class="nat-bar-label"><span>Senado derecha (4 partidos)</span><span>6.56M votos</span></div>
+        <div class="nat-bar" id="senadoBar"></div>
+      </div>
+      <div>
+        <div class="nat-bar-label"><span>Paloma Valencia – consulta</span><span>3.24M votos (49.4%)</span></div>
+        <div class="nat-bar">
+          <div class="nat-bar-seg" style="width:49.4%;background:var(--paloma)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-section">
+      <div class="section-title">Por departamento</div>
+      <div class="tab-group">
+        <button class="tab-btn active" onclick="switchTab('sn',this)">Fuerza SN</button>
+        <button class="tab-btn" onclick="switchTab('cd_gap',this)">CD – Paloma</button>
+        <button class="tab-btn" onclick="switchTab('paloma_pct',this)">Paloma %</button>
+      </div>
+      <div id="deptChart"></div>
+    </div>
+
+    <div class="side-section">
+      <div class="section-title">Correlación con Paloma</div>
+      <div style="margin-bottom:10px">
+        <div class="corr-row">
+          <div class="corr-label"><span style="width:7px;height:7px;border-radius:50%;background:var(--cd);display:inline-block"></span>CD</div>
+          <div class="corr-bar-bg"><div class="corr-bar-fill" style="width:95.2%;background:var(--cd)"></div></div>
+          <div class="corr-val">0.952</div>
+        </div>
+        <div class="corr-row">
+          <div class="corr-label"><span style="width:7px;height:7px;border-radius:50%;background:var(--sn);display:inline-block"></span>SN</div>
+          <div class="corr-bar-bg"><div class="corr-bar-fill" style="width:84.7%;background:var(--sn)"></div></div>
+          <div class="corr-val">0.847</div>
+        </div>
+        <div class="corr-row">
+          <div class="corr-label"><span style="width:7px;height:7px;border-radius:50%;background:var(--cr);display:inline-block"></span>Cambio Rad.</div>
+          <div class="corr-bar-bg"><div class="corr-bar-fill" style="width:62.6%;background:var(--cr)"></div></div>
+          <div class="corr-val">0.626</div>
+        </div>
+        <div class="corr-row">
+          <div class="corr-label"><span style="width:7px;height:7px;border-radius:50%;background:var(--cons);display:inline-block"></span>Conservador</div>
+          <div class="corr-bar-bg"><div class="corr-bar-fill" style="width:49.9%;background:var(--cons)"></div></div>
+          <div class="corr-val">0.499</div>
+        </div>
+      </div>
+      <div class="analysis-text">
+        CD y Paloma son casi el mismo electorado (r = 0.95). El Conservador y CR tienen bases más autónomas — especialmente en la <strong>Costa Caribe</strong>, donde superan a Paloma por amplio margen.
+      </div>
+      <div class="analysis-text" style="margin-top:8px">
+        <strong>SN en Bogotá:</strong> 198k votos, 20% de toda la derecha capitalina. <strong>Boyacá</strong>: municipios como Tuta (46% SN) y Chivata (44%) son las plazas más fuertes del partido. En los <strong>consulados</strong>, SN representa el 31.5% de la derecha exterior.
+      </div>
+    </div>
+
+    <div class="side-section">
+      <div class="section-title">Municipios donde el CD supera a Paloma</div>
+      <div id="topMuniList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const NATIONAL = { SN:705924, CR:1248021, CONS:1565786, CD:3035715, PALOMA:3236286, rightTotal:6555446 };
+const C = { SN:'#d4470a', CR:'#c9920a', CONS:'#1a7a4a', CD:'#1a5ab8', PALOMA:'#b01870' };
+
+const DEPT_DATA = [
+  {d:'BOGOTA D.C.',SN:198276,CD:638925,CR:85188,CONS:52825,PALOMA:539612,right:975214},
+  {d:'CONSULADOS',SN:34691,CD:65616,CR:5233,CONS:4744,PALOMA:65363,right:110284},
+  {d:'BOYACA',SN:27002,CD:88829,CR:26366,CONS:11480,PALOMA:97063,right:153677},
+  {d:'CUNDINAMARCA',SN:52948,CD:203229,CR:87654,CONS:53773,PALOMA:205814,right:397604},
+  {d:'SANTANDER',SN:46960,CD:170607,CR:74369,CONS:52030,PALOMA:193086,right:343966},
+  {d:'RISARALDA',SN:20885,CD:61520,CR:9399,CONS:57222,PALOMA:67736,right:149026},
+  {d:'TOLIMA',SN:19523,CD:93610,CR:19462,CONS:17186,PALOMA:118360,right:149781},
+  {d:'VALLE',SN:68941,CD:190181,CR:103118,CONS:246045,PALOMA:202442,right:608285},
+  {d:'ANTIOQUIA',SN:64781,CD:744372,CR:52564,CONS:80661,PALOMA:741119,right:942378},
+  {d:'CALDAS',SN:14699,CD:72684,CR:7865,CONS:22118,PALOMA:74014,right:117366},
+  {d:'HUILA',SN:16339,CD:74191,CR:20593,CONS:19860,PALOMA:80970,right:130983},
+  {d:'META',SN:14399,CD:90941,CR:34232,CONS:42807,PALOMA:100338,right:182379},
+  {d:'N. DE SANTANDER',SN:18345,CD:71938,CR:22253,CONS:97747,PALOMA:132473,right:210283},
+  {d:'ATLANTICO',SN:28640,CD:55286,CR:233658,CONS:51923,PALOMA:90582,right:369507},
+  {d:'CASANARE',SN:4956,CD:53501,CR:7520,CONS:6795,PALOMA:47180,right:72772},
+  {d:'BOLIVAR',SN:15374,CD:43621,CR:106288,CONS:68215,PALOMA:73077,right:233498},
+  {d:'MAGDALENA',SN:8101,CD:48632,CR:68107,CONS:56234,PALOMA:51362,right:181074},
+  {d:'CESAR',SN:6018,CD:40752,CR:65687,CONS:96890,PALOMA:55914,right:209347},
+  {d:'CORDOBA',SN:6571,CD:24864,CR:88276,CONS:251344,PALOMA:56838,right:371055},
+  {d:'LA GUAJIRA',SN:1987,CD:8399,CR:15454,CONS:100541,PALOMA:19695,right:126381}
+];
+
+const TOP_CD = [
+  {m:'BOGOTÁ',SN:198276,CD:638925,PALOMA:539612,diff:99313},
+  {m:'BELLO',SN:5274,CD:49710,PALOMA:46124,diff:3586},
+  {m:'SOACHA',SN:7328,CD:20401,PALOMA:17198,diff:3203},
+  {m:'YOPAL',SN:2648,CD:18879,PALOMA:17188,diff:1691},
+  {m:'LA ESTRELLA',SN:893,CD:11723,PALOMA:10279,diff:1444},
+  {m:'LA CEJA',SN:903,CD:13134,PALOMA:12118,diff:1016},
+  {m:'CAJICA',SN:2862,CD:9750,PALOMA:8888,diff:862},
+  {m:'FLORENCIA',SN:1882,CD:12815,PALOMA:11973,diff:842},
+  {m:'ZIPAQUIRÁ',SN:3781,CD:8610,PALOMA:7899,diff:711},
+  {m:'FUSAGASUGÁ',SN:3631,CD:13531,PALOMA:13148,diff:383},
+];
+
+// TOTALS BAR
+const totalsBar = document.getElementById('totalsBar');
+[
+  {key:'CD',name:'Centro Democrático',color:C.CD,votes:NATIONAL.CD},
+  {key:'PALOMA',name:'Paloma Valencia',color:C.PALOMA,votes:NATIONAL.PALOMA},
+  {key:'CONS',name:'Conservador',color:C.CONS,votes:NATIONAL.CONS},
+  {key:'CR',name:'Cambio Radical',color:C.CR,votes:NATIONAL.CR},
+  {key:'SN',name:'Salvación Nacional',color:C.SN,votes:NATIONAL.SN},
+].forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'total-pill';
+  el.innerHTML = `
+    <div class="pill-dot" style="background:${p.color}"></div>
+    <div>
+      <div class="pill-name">${p.name}</div>
+      <div class="pill-votes" style="color:${p.color}">${(p.votes/1e6).toFixed(2)}M</div>
+    </div>
+    <div class="pill-pct">${(p.votes/NATIONAL.rightTotal*100).toFixed(1)}% der.</div>
+  `;
+  totalsBar.appendChild(el);
+});
+
+// SENADO BAR
+const senadoBar = document.getElementById('senadoBar');
+[
+  {v:NATIONAL.CD,c:C.CD},{v:NATIONAL.CONS,c:C.CONS},
+  {v:NATIONAL.CR,c:C.CR},{v:NATIONAL.SN,c:C.SN}
+].forEach(s => {
+  const seg = document.createElement('div');
+  seg.className = 'nat-bar-seg';
+  seg.style.width = (s.v/NATIONAL.rightTotal*100) + '%';
+  seg.style.background = s.c;
+  senadoBar.appendChild(seg);
+});
+
+// DEPT CHART
+let currentTab = 'sn';
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDeptChart();
+}
+
+function renderDeptChart() {
+  const c = document.getElementById('deptChart');
+  const data = [...DEPT_DATA].filter(d => d.right > 8000);
+  let html = '';
+
+  if (currentTab === 'sn') {
+    data.sort((a,b) => (b.SN/b.right)-(a.SN/a.right));
+    const maxPct = Math.max(...data.map(d => d.SN/d.right)) * 100;
+    data.slice(0,12).forEach(d => {
+      const pct = d.SN/d.right*100;
+      html += `<div class="dept-row">
+        <div class="dept-name">${d.d}</div>
+        <div class="dept-bar-wrap"><div class="dept-bar-inner" style="width:${pct/maxPct*100}%;background:${C.SN}"></div></div>
+        <div class="dept-val">${pct.toFixed(1)}%</div></div>`;
+    });
+  } else if (currentTab === 'cd_gap') {
+    data.sort((a,b) => (b.CD-b.PALOMA)-(a.CD-a.PALOMA));
+    const vals = data.map(d => Math.abs(d.CD-d.PALOMA));
+    const maxV = Math.max(...vals);
+    data.slice(0,12).forEach(d => {
+      const diff = d.CD - d.PALOMA;
+      const isPos = diff >= 0;
+      const label = diff > 0 ? `+${(diff/1000).toFixed(0)}k` : `${(diff/1000).toFixed(0)}k`;
+      html += `<div class="dept-row">
+        <div class="dept-name">${d.d}</div>
+        <div class="dept-bar-wrap"><div class="dept-bar-inner" style="width:${Math.abs(diff)/maxV*100}%;background:${isPos?C.CD:C.PALOMA};opacity:0.85"></div></div>
+        <div class="dept-val" style="color:${isPos?C.CD:C.PALOMA}">${label}</div></div>`;
+    });
+  } else {
+    data.sort((a,b) => (b.PALOMA/b.right)-(a.PALOMA/a.right));
+    const maxP = Math.max(...data.map(d => d.PALOMA/d.right))*100;
+    data.slice(0,12).forEach(d => {
+      const pct = d.PALOMA/d.right*100;
+      html += `<div class="dept-row">
+        <div class="dept-name">${d.d}</div>
+        <div class="dept-bar-wrap"><div class="dept-bar-inner" style="width:${pct/maxP*100}%;background:${C.PALOMA}"></div></div>
+        <div class="dept-val">${pct.toFixed(1)}%</div></div>`;
+    });
+  }
+  c.innerHTML = html;
+}
+renderDeptChart();
+
+// TOP MUNIS
+const fmt = n => n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1000).toFixed(0)+'k':String(n);
+document.getElementById('topMuniList').innerHTML = TOP_CD.map(m => `
+  <div class="muni-row">
+    <div>
+      <div class="muni-name">${m.m}</div>
+      <div class="muni-sub">CD: ${fmt(m.CD)} · Paloma: ${fmt(m.PALOMA)} · SN: ${fmt(m.SN)}</div>
+    </div>
+    <div class="muni-diff" style="color:var(--cd)">+${fmt(m.diff)}</div>
+  </div>`).join('');
+
+// === COLOR SCALES ===
+const colorScales = {
+  cd_gap: {
+    fn: p => {
+      const r = p.paloma_cd_ratio;
+      if (r==null || !p.CD) return '#e8e6df';
+      if (r < 0.75) return '#1d3fa3';
+      if (r < 0.88) return '#2d6de8';
+      if (r < 0.97) return '#7db4f0';
+      if (r < 1.03) return '#c4bfe0';
+      if (r < 1.15) return '#e8709a';
+      if (r < 1.40) return '#c8275a';
+      return '#8b0e37';
+    },
+    legend:[
+      {c:'#1d3fa3',l:'CD >> Paloma  (< 0.75)'},
+      {c:'#2d6de8',l:'CD > Paloma  (0.75–0.88)'},
+      {c:'#7db4f0',l:'CD ≈ Paloma  (0.88–0.97)'},
+      {c:'#c4bfe0',l:'Igual  (0.97–1.03)'},
+      {c:'#e8709a',l:'Paloma > CD  (1.03–1.15)'},
+      {c:'#c8275a',l:'Paloma >> CD  (1.15–1.40)'},
+      {c:'#8b0e37',l:'Paloma >>> CD  (>1.40)'},
+    ],
+    title:'Ratio Paloma / CD'
+  },
+  sn_share: {
+    fn: p => {
+      if (!p.right_total || p.right_total < 10) return '#e8e6df';
+      const pct = p.SN/p.right_total;
+      if (pct < 0.05) return '#ede9e2';
+      if (pct < 0.10) return '#fad4be';
+      if (pct < 0.15) return '#f5a07a';
+      if (pct < 0.20) return '#e8682e';
+      if (pct < 0.27) return '#c44010';
+      if (pct < 0.35) return '#922c06';
+      return '#5e1800';
+    },
+    legend:[
+      {c:'#ede9e2',l:'SN < 5%'},
+      {c:'#fad4be',l:'5–10%'},
+      {c:'#f5a07a',l:'10–15%'},
+      {c:'#e8682e',l:'15–20%'},
+      {c:'#c44010',l:'20–27%'},
+      {c:'#922c06',l:'27–35%'},
+      {c:'#5e1800',l:'> 35%'},
+    ],
+    title:'SN como % del voto derechista'
+  },
+  paloma_pct: {
+    fn: p => {
+      if (!p.right_total || p.right_total < 10) return '#e8e6df';
+      const pct = p.PALOMA/p.right_total;
+      if (pct < 0.25) return '#ede9e2';
+      if (pct < 0.38) return '#f5c2d8';
+      if (pct < 0.48) return '#e8709a';
+      if (pct < 0.58) return '#c8275a';
+      if (pct < 0.68) return '#96104a';
+      if (pct < 0.78) return '#68073a';
+      return '#3d0022';
+    },
+    legend:[
+      {c:'#ede9e2',l:'Paloma < 25%'},
+      {c:'#f5c2d8',l:'25–38%'},
+      {c:'#e8709a',l:'38–48%'},
+      {c:'#c8275a',l:'48–58%'},
+      {c:'#96104a',l:'58–68%'},
+      {c:'#68073a',l:'68–78%'},
+      {c:'#3d0022',l:'> 78%'},
+    ],
+    title:'Paloma % del voto derechista'
+  },
+  right_gap: {
+    fn: p => {
+      const g = p.right_no_paloma;
+      if (g==null || !p.CD) return '#e8e6df';
+      if (g < 100) return '#ede9e2';
+      if (g < 600) return '#c8e6d4';
+      if (g < 2500) return '#74c492';
+      if (g < 8000) return '#2ea862';
+      if (g < 30000) return '#1a7a48';
+      if (g < 120000) return '#0f5030';
+      return '#062e1c';
+    },
+    legend:[
+      {c:'#ede9e2',l:'< 100'},
+      {c:'#c8e6d4',l:'100–600'},
+      {c:'#74c492',l:'600–2.5k'},
+      {c:'#2ea862',l:'2.5k–8k'},
+      {c:'#1a7a48',l:'8k–30k'},
+      {c:'#0f5030',l:'30k–120k'},
+      {c:'#062e1c',l:'> 120k'},
+    ],
+    title:'Votos derechos no-Paloma'
+  }
+};
+
+let currentMode = 'cd_gap';
+function setMapMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.map-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  d3.selectAll('.muni-path').attr('fill', d => colorScales[mode].fn(d.properties));
+  updateLegend(mode);
+}
+
+function updateLegend(mode) {
+  const s = colorScales[mode];
+  document.getElementById('mapLegend').innerHTML =
+    `<div class="legend-title">${s.title}</div>` +
+    s.legend.map(l => `<div class="legend-item"><div class="legend-swatch" style="background:${l.c}"></div><div class="legend-text">${l.l}</div></div>`).join('');
+}
+updateLegend('cd_gap');
+
+// MAP
+const tooltip = document.getElementById('tooltip');
+fetch('colombia_final.geojson')
+  .then(r => r.json())
+  .then(data => {
+    const mapEl = document.getElementById('map');
+    const W = mapEl.parentElement.clientWidth;
+    const H = mapEl.parentElement.clientHeight;
+    mapEl.setAttribute('width', W);
+    mapEl.setAttribute('height', H);
+
+    const projection = d3.geoMercator().fitSize([W, H], data);
+    const path = d3.geoPath().projection(projection);
+    const svg = d3.select('#map');
+
+    svg.selectAll('.muni-path')
+      .data(data.features)
+      .enter().append('path')
+      .attr('class', 'muni-path')
+      .attr('d', path)
+      .attr('fill', d => colorScales['cd_gap'].fn(d.properties))
+      .attr('stroke', '#f5f4f0')
+      .attr('stroke-width', 0.35)
+      .on('mousemove', function(event, d) {
+        const p = d.properties;
+        if (!p.CD && !p.SN) { tooltip.style.display='none'; return; }
+        const right = p.right_total || 0;
+        const snPct = right > 0 ? (p.SN/right*100).toFixed(1) : '—';
+        const palPct = right > 0 ? (p.PALOMA/right*100).toFixed(1) : '—';
+        const ratio = p.paloma_cd_ratio;
+        tooltip.style.display = 'block';
+        tooltip.style.left = (event.clientX + 14) + 'px';
+        tooltip.style.top = (event.clientY - 12) + 'px';
+        tooltip.innerHTML = `
+          <div class="tt-name">${p.name}</div>
+          <div class="tt-dept">${p.departamento || p.dpt || ''}</div>
+          <div class="tt-row"><span class="tt-label"><span class="tt-dot" style="background:${C.SN}"></span>SN</span><span class="tt-val">${fmt(p.SN||0)}</span></div>
+          <div class="tt-row"><span class="tt-label"><span class="tt-dot" style="background:${C.CR}"></span>CR</span><span class="tt-val">${fmt(p.CR||0)}</span></div>
+          <div class="tt-row"><span class="tt-label"><span class="tt-dot" style="background:${C.CONS}"></span>Conservador</span><span class="tt-val">${fmt(p.CONS||0)}</span></div>
+          <div class="tt-row"><span class="tt-label"><span class="tt-dot" style="background:${C.CD}"></span>CD</span><span class="tt-val">${fmt(p.CD||0)}</span></div>
+          <hr class="tt-divider">
+          <div class="tt-row"><span class="tt-label"><span class="tt-dot" style="background:${C.PALOMA}"></span>Paloma</span><span class="tt-val" style="color:${C.PALOMA}">${fmt(p.PALOMA||0)}</span></div>
+          <div class="tt-highlight">
+            <div class="tt-row"><span class="tt-label">Ratio Paloma/CD</span><span class="tt-val">${ratio!=null?ratio.toFixed(2):'—'}</span></div>
+            <div class="tt-row"><span class="tt-label">SN % derecha</span><span class="tt-val">${snPct}%</span></div>
+            <div class="tt-row"><span class="tt-label">Paloma % derecha</span><span class="tt-val">${palPct}%</span></div>
+          </div>`;
+        d3.select(this).raise().attr('stroke','#1a1916').attr('stroke-width',1);
+      })
+      .on('mouseleave', function() {
+        tooltip.style.display = 'none';
+        d3.select(this).attr('stroke','#f5f4f0').attr('stroke-width',0.35);
+      });
+  })
+  .catch(err => {
+    console.error('Map error:', err);
+    d3.select('#map').append('text').attr('x','50%').attr('y','50%')
+      .attr('text-anchor','middle').attr('fill','#9a9890').attr('font-size',14)
+      .text('Error cargando mapa: ' + err.message);
+  });
+</script>
+</body>
+</html>
