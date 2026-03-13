@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultas Presidenciales en Colombia 1990–2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f7f4;
+    color: #1a1a1a;
+    padding: 2rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: #1a1a1a;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 520px;
+  }
+  .hint {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 10px;
+  }
+  #tooltip-box {
+    display: none;
+    background: #fff;
+    border: 0.5px solid #ddd;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 13px;
+    max-width: 520px;
+  }
+  #tooltip-box .tt-header {
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .tt-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 0.5px solid #eee;
+  }
+  .tt-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+  .tt-name { flex: 1; color: #1a1a1a; }
+  .tt-votes { color: #555; }
+  .tt-pct { color: #aaa; min-width: 44px; text-align: right; }
+  .tt-total {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+
+<h1>Consultas presidenciales en Colombia, 1990–2026</h1>
+<p class="subtitle">Votos por consulta y candidato. Haz clic en una barra para ver el desglose completo.</p>
+
+<div class="chart-wrap">
+  <canvas id="consultasChart"></canvas>
+</div>
+
+<p class="hint">Haz clic en cualquier segmento para ver el detalle</p>
+<div id="tooltip-box"></div>
+
+<script>
+const CANDIDATE_COLORS = {
+  'César Gaviria':'#c0392b','Hernando Durán Dussán':'#e57373','Ernesto Samper':'#e53935',
+  'Alberto Santofimio':'#ef9a9a','William Jaramillo':'#ff7043','Jaime Castro':'#e8a0a0',
+  'Humberto de la Calle':'#b71c1c','Carlos Lleras de la Fuente':'#f44336','David Turbay':'#e57373',
+  'Carlos Lemos Simmonds':'#ffcdd2','Rodolfo González':'#ff8a80','Gloria Gaitán':'#ff5252',
+  'Horacio Serpa':'#c62828','Rafael Pardo':'#d32f2f','Rodrigo Rivera':'#e57373',
+  'Andrés González Díaz':'#ff8a80','Alfonso Gómez Méndez':'#ef5350','Cecilia López':'#f48fb1',
+  'Alfonso López Caballero':'#ff7043','Héctor Helí Rojas':'#e64a19','Iván Marulanda':'#ffa07a',
+  'Juan Fernando Cristo':'#ff6b6b','Carlos Gaviria Díaz':'#f9a825','Antonio Navarro':'#fdd835',
+  'Gustavo Petro':'#7b1fa2','Iván Cepeda Castro':'#9c27b0','Carolina Corcho':'#ba68c8',
+  'Noemí Sanín':'#1565c0','Andrés Felipe Arias':'#1976d2','Marta Lucía Ramírez':'#64b5f6',
+  'Antanas Mockus':'#2e7d32','Enrique Peñalosa':'#00838f','Lucho Garzón':'#43a047',
+  'Camilo Romero':'#66bb6a','John Sudarsky':'#a5d6a7','Iván Duque':'#42a5f5',
+  'Alejandro Ordóñez':'#90caf9','Carlos Caicedo':'#f57c00','Francia Márquez':'#fdd835',
+  'Arelis Uriana':'#aed581','Alfredo Saade':'#ce93d8','Federico Gutiérrez':'#1e88e5',
+  'Alejandro Char':'#5c8dc9','David Barguil':'#3b6bb5','Aydée Lizarazo':'#b0c4de',
+  'Sergio Fajardo':'#388e3c','Juan Manuel Galán':'#e53935','Carlos Amaya':'#4caf50',
+  'Alejandro Gaviria':'#81c784','Jorge Robledo':'#a5d645','Paloma Valencia':'#5b9bd5',
+  'Juan Daniel Oviedo':'#2e86c1','Juan Carlos Pinzón':'#7fb3d3','Vicky Dávila':'#a8d1e7',
+  'Aníbal Gaviria':'#f48fb1','David Luna':'#90caf9','Mauricio Cárdenas':'#b3d9f7',
+  'Daniel Quintero':'#9e9e9e','Roy Barreras':'#b71c1c','Edinson Torres':'#e57373',
+  'Martha Bernal':'#ffab91','Héctor Pineda':'#ff8a65','Claudia López':'#2e7d32',
+  'Leonardo Huerta':'#81c784',
+};
+
+const data = [
+  {year:1990,consultations:[{party:'Partido Liberal',color:'#c0392b',candidates:[
+    {name:'César Gaviria',votes:2797482},{name:'Hernando Durán Dussán',votes:1204987},
+    {name:'Ernesto Samper',votes:1028866},{name:'Alberto Santofimio',votes:232106},
+    {name:'William Jaramillo',votes:86683},{name:'Jaime Castro',votes:46899}]}]},
+  {year:1994,consultations:[{party:'Partido Liberal',color:'#c0392b',candidates:[
+    {name:'Ernesto Samper',votes:1245283},{name:'Humberto de la Calle',votes:335155},
+    {name:'Carlos Lleras de la Fuente',votes:202925},{name:'David Turbay',votes:172096},
+    {name:'Carlos Lemos Simmonds',votes:129983},{name:'Rodolfo González',votes:72573},
+    {name:'Gloria Gaitán',votes:65456}]}]},
+  {year:2006,consultations:[
+    {party:'Partido Liberal',color:'#c0392b',candidates:[
+      {name:'Horacio Serpa',votes:1051533},{name:'Rafael Pardo',votes:526298},
+      {name:'Rodrigo Rivera',votes:500020},{name:'Andrés González Díaz',votes:120386}]},
+    {party:'Polo Democrático',color:'#f9a825',candidates:[
+      {name:'Carlos Gaviria Díaz',votes:572834},{name:'Antonio Navarro',votes:498342}]}]},
+  {year:2010,consultations:[
+    {party:'Partido Liberal',color:'#c0392b',candidates:[
+      {name:'Rafael Pardo',votes:398107},{name:'Aníbal Gaviria',votes:232943},
+      {name:'Alfonso Gómez Méndez',votes:211728},{name:'Cecilia López',votes:81598},
+      {name:'Alfonso López Caballero',votes:52074},{name:'Héctor Helí Rojas',votes:50580},
+      {name:'Iván Marulanda',votes:26712}]},
+    {party:'Polo Democrático',color:'#f9a825',candidates:[
+      {name:'Gustavo Petro',votes:234244},{name:'Carlos Gaviria Díaz',votes:210440}]},
+    {party:'Partido Conservador',color:'#1565c0',candidates:[
+      {name:'Noemí Sanín',votes:1118090},{name:'Andrés Felipe Arias',votes:1080313},
+      {name:'Marta Lucía Ramírez',votes:315486}]},
+    {party:'Partido Verde',color:'#2e7d32',candidates:[
+      {name:'Antanas Mockus',votes:822424},{name:'Enrique Peñalosa',votes:489075},
+      {name:'Lucho Garzón',votes:275114}]}]},
+  {year:2014,consultations:[{party:'Alianza Verde',color:'#2e7d32',candidates:[
+    {name:'Enrique Peñalosa',votes:1343384},{name:'Camilo Romero',votes:463692},
+    {name:'John Sudarsky',votes:23706}]}]},
+  {year:2018,consultations:[
+    {party:'Gran Consulta',color:'#1565c0',candidates:[
+      {name:'Iván Duque',votes:4044509},{name:'Marta Lucía Ramírez',votes:1538882},
+      {name:'Alejandro Ordóñez',votes:385110}]},
+    {party:'Inclusión Social',color:'#7b1fa2',candidates:[
+      {name:'Gustavo Petro',votes:2853731},{name:'Carlos Caicedo',votes:515309}]},
+    {party:'Partido Liberal',color:'#c0392b',candidates:[
+      {name:'Humberto de la Calle',votes:365658},{name:'Juan Fernando Cristo',votes:324777}]}]},
+  {year:2022,consultations:[
+    {party:'Pacto Histórico',color:'#7b1fa2',candidates:[
+      {name:'Gustavo Petro',votes:4495831},{name:'Francia Márquez',votes:785215},
+      {name:'Camilo Romero',votes:227218},{name:'Arelis Uriana',votes:54770},
+      {name:'Alfredo Saade',votes:21724}]},
+    {party:'Equipo por Colombia',color:'#1e88e5',candidates:[
+      {name:'Federico Gutiérrez',votes:2161686},{name:'Alejandro Char',votes:707007},
+      {name:'David Barguil',votes:629510},{name:'Aydée Lizarazo',votes:259771},
+      {name:'Enrique Peñalosa',votes:231668}]},
+    {party:'Centro Esperanza',color:'#388e3c',candidates:[
+      {name:'Sergio Fajardo',votes:723475},{name:'Juan Manuel Galán',votes:487019},
+      {name:'Carlos Amaya',votes:451223},{name:'Alejandro Gaviria',votes:336504},
+      {name:'Jorge Robledo',votes:161244}]}]},
+  {year:2026,consultations:[
+    {party:'Gran Consulta',color:'#1565c0',candidates:[
+      {name:'Paloma Valencia',votes:3236286},{name:'Juan Daniel Oviedo',votes:1255510},
+      {name:'Juan Manuel Galán',votes:327765},{name:'Juan Carlos Pinzón',votes:297646},
+      {name:'Vicky Dávila',votes:238045},{name:'Enrique Peñalosa',votes:162534},
+      {name:'Aníbal Gaviria',votes:149091},{name:'David Luna',votes:115229},
+      {name:'Mauricio Cárdenas',votes:75289}]},
+    {party:'Pacto Histórico',color:'#7b1fa2',candidates:[
+      {name:'Iván Cepeda Castro',votes:1540391},{name:'Carolina Corcho',votes:678962},
+      {name:'Daniel Quintero',votes:145558}]},
+    {party:'Frente por la Vida',color:'#b71c1c',candidates:[
+      {name:'Roy Barreras',votes:257037},{name:'Daniel Quintero',votes:227379},
+      {name:'Edinson Torres',votes:43002},{name:'Martha Bernal',votes:40373},
+      {name:'Héctor Pineda',votes:28187}]},
+    {party:'Soluciones',color:'#2e7d32',candidates:[
+      {name:'Claudia López',votes:574499},{name:'Leonardo Huerta',votes:44020}]}]}
+];
+
+const yearLabels = data.map(d => d.year.toString());
+
+// Build per-stack datasets
+const perStackDatasets = [];
+data.forEach((yr, i) => {
+  yr.consultations.forEach((c, j) => {
+    c.candidates.forEach(cd => {
+      const base = CANDIDATE_COLORS[cd.name] || c.color;
+      const dataArr = data.map(() => null);
+      dataArr[i] = cd.votes;
+      perStackDatasets.push({
+        label: cd.name, party: c.party, partyColor: c.color,
+        data: dataArr, backgroundColor: base,
+        borderColor: 'rgba(255,255,255,0.5)', borderWidth: 0.5,
+        stack: `${i}-${j}`,
+        barPercentage: 1.0,
+        categoryPercentage: 0.95,
+      });
+    });
+  });
+});
+
+const ctx = document.getElementById('consultasChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: { labels: yearLabels, datasets: perStackDatasets },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const v = ctx.raw;
+            if (!v) return null;
+            return ` ${ctx.dataset.label}: ${v.toLocaleString('es-CO')} votos`;
+          },
+          title: (items) => `${items[0].dataset.party} (${yearLabels[items[0].dataIndex]})`
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#888', font: { size: 13 } },
+        grid: { display: false },
+        border: { display: false }
+      },
+      y: {
+        ticks: {
+          color: '#888', font: { size: 11 },
+          callback: v => v >= 1000000 ? (v / 1000000).toFixed(1) + 'M' : v >= 1000 ? (v / 1000).toFixed(0) + 'K' : v
+        },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        border: { display: false },
+        title: { display: true, text: 'Votos', color: '#888', font: { size: 11 } }
+      }
+    },
+    onClick: (evt, elements) => {
+      if (!elements.length) return;
+      const el = elements[0];
+      const ds = perStackDatasets[el.datasetIndex];
+      const yr = data[el.index];
+      const cons = yr.consultations.find(c => c.candidates.some(cd => cd.name === ds.label));
+      if (!cons) return;
+      const box = document.getElementById('tooltip-box');
+      let html = `<div class="tt-header">${cons.party} — ${yr.year}</div>`;
+      const total = cons.candidates.reduce((s, c) => s + c.votes, 0);
+      cons.candidates.forEach(cd => {
+        const pct = ((cd.votes / total) * 100).toFixed(1);
+        const col = CANDIDATE_COLORS[cd.name] || cons.color;
+        html += `<div class="tt-row">
+          <span class="tt-dot" style="background:${col}"></span>
+          <span class="tt-name">${cd.name}</span>
+          <span class="tt-votes">${cd.votes.toLocaleString('es-CO')}</span>
+          <span class="tt-pct">${pct}%</span>
+        </div>`;
+      });
+      html += `<div class="tt-total">Total: ${total.toLocaleString('es-CO')} votos</div>`;
+      box.innerHTML = html;
+      box.style.display = 'block';
+    }
+  }
+});
+</script>
+</body>
+</html>
