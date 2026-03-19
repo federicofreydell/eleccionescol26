@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Candidatos repetidos · 2022 vs 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Segoe UI',sans-serif;background:#f4f3ee;color:#1a1a1a;padding:28px 20px 48px}
+.page{max-width:900px;margin:0 auto}
+h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.intro{font-size:13px;color:#666;margin-bottom:32px}
+.section{margin-bottom:44px}
+.section-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.section-title{font-size:16px;font-weight:700;line-height:1.2}
+.section-sub{font-size:12px;color:#888;margin-top:3px}
+.export-btn{
+  padding:7px 16px;font-size:12px;font-weight:600;border:1.5px solid #ccc;
+  border-radius:20px;background:#fff;cursor:pointer;color:#555;
+  transition:all 0.15s;white-space:nowrap;flex-shrink:0
+}
+.export-btn:hover{background:#1d6b4a;color:#fff;border-color:#1d6b4a}
+.chart-wrap{background:#fff;border-radius:12px;border:0.5px solid #ddd;padding:20px 20px 12px;position:relative}
+.legend{display:flex;gap:20px;margin-bottom:16px;font-size:12px;color:#555;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px}
+.leg-sq{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+canvas{display:block;width:100%!important}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Candidatos repetidos · Senado 2022 vs 2026</h1>
+  <p class="intro">Candidatos que compitieron en ambas elecciones dentro del mismo espacio político · Ordenados por votos 2022 · Barras grises = 2022, barras de color = 2026</p>
+
+  <!-- CCE → APC -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Coalición Centro Esperanza 2022 → Alianza Verde 2026</div>
+        <div class="section-sub">CCE (cod 104, 2022) vs Alianza por Colombia / Partido Verde (cod 57, 2026)</div>
+      </div>
+      <button class="export-btn" onclick="exportPNG('cce')">↓ Exportar PNG</button>
+    </div>
+    <div class="chart-wrap" id="wrap-cce">
+      <div class="legend">
+        <span class="leg"><span class="leg-sq" style="background:#b0b8c1"></span>Votos CCE 2022</span>
+        <span class="leg"><span class="leg-sq" style="background:#2d9d6e"></span>Votos APC/Verde 2026</span>
+        <span class="leg"><span class="leg-sq" style="background:#c84b2a"></span>Votos APC/Verde 2026 (caída)</span>
+      </div>
+      <canvas id="cce-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Liberal -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Partido Liberal · 2022 vs 2026</div>
+        <div class="section-sub">Partido Liberal Colombiano (cod 9, ambos años)</div>
+      </div>
+      <button class="export-btn" onclick="exportPNG('lib')">↓ Exportar PNG</button>
+    </div>
+    <div class="chart-wrap" id="wrap-lib">
+      <div class="legend">
+        <span class="leg"><span class="leg-sq" style="background:#b0b8c1"></span>Votos Liberal 2022</span>
+        <span class="leg"><span class="leg-sq" style="background:#d4252a"></span>Votos Liberal 2026 (caída)</span>
+        <span class="leg"><span class="leg-sq" style="background:#d4252a" style="opacity:0.5"></span>Votos Liberal 2026 (ganancia)</span>
+      </div>
+      <canvas id="lib-chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const CCE = [{"n": "Jonathan Ferney Pulido Hernandez", "v22": 188086, "v26": 157239, "pct": -16.4}, {"n": "Ariel Fernando Avila Martinez", "v22": 95791, "v26": 88348, "pct": -7.8}, {"n": "Angelica Lisbeth Lozano Correa", "v22": 83100, "v26": 35983, "pct": -56.7}, {"n": "Inti Raul Asprilla Reyes", "v22": 81566, "v26": 8840, "pct": -89.2}, {"n": "Jairo Alberto Castellanos Serrano", "v22": 55796, "v26": 57868, "pct": 3.7}, {"n": "Andrea Padilla Villarraga", "v22": 48211, "v26": 107311, "pct": 122.6}, {"n": "Edwing Fabian Diaz Plata", "v22": 47446, "v26": 15639, "pct": -67.0}, {"n": "Gustavo Adolfo Moreno Hurtado", "v22": 43098, "v26": 87899, "pct": 104.0}, {"n": "Sor Berenice Bedoya Perez", "v22": 40568, "v26": 36154, "pct": -10.9}, {"n": "Leon Fredy Mu\u00f1oz Lopera", "v22": 38821, "v26": 23824, "pct": -38.6}, {"n": "Arley Fernando Gomez Hernandez", "v22": 37894, "v26": 31870, "pct": -15.9}, {"n": "Dubet Antonio Mu\u00f1oz Bedoya", "v22": 5637, "v26": 740, "pct": -86.9}, {"n": "Dalia Fernanda Pineda Aguasaco", "v22": 3872, "v26": 516, "pct": -86.7}, {"n": "Santiago Bernardo Mu\u00f1oz Diaz", "v22": 3253, "v26": 1377, "pct": -57.7}];
+const LIB = [{"n": "Juan Carlos Garces Rojas", "v22": 150853, "v26": 128566, "pct": -14.8}, {"n": "John Moises Besaile Fayad", "v22": 132776, "v26": 107398, "pct": -19.1}, {"n": "Norma Hurtado Sanchez", "v22": 127840, "v26": 135512, "pct": 6.0}, {"n": "Jose David Name Cardozo", "v22": 107067, "v26": 68003, "pct": -36.5}, {"n": "Juan Felipe Lemos Uribe", "v22": 86786, "v26": 71083, "pct": -18.1}, {"n": "Julio Elias Chagui Florez", "v22": 79352, "v26": 69555, "pct": -12.3}, {"n": "Alfredo Rafael Deluque Zuleta", "v22": 78966, "v26": 112885, "pct": 43.0}, {"n": "Jose Alfredo Gnecco Zuleta", "v22": 68160, "v26": 72005, "pct": 5.6}, {"n": "Antonio Jose Correa Jimenez", "v22": 63856, "v26": 84133, "pct": 31.8}, {"n": "Julio Alberto Elias Vidal", "v22": 54977, "v26": 68782, "pct": 25.1}, {"n": "Oscar Eduardo Apolinar Martinez", "v22": 41677, "v26": 71505, "pct": 71.6}, {"n": "Hugo Alberto Ospina Agudelo", "v22": 9135, "v26": 2750, "pct": -69.9}, {"n": "Luz Margoth Rojas Abaunza", "v22": 5727, "v26": 6215, "pct": 8.5}, {"n": "Wasldistrudis Hurtado Minotta", "v22": 2744, "v26": 457, "pct": -83.3}, {"n": "Claudia Sofia Lemos Lemos", "v22": 1547, "v26": 543, "pct": -64.9}, {"n": "Angelica Maria Pereira Mu\u00f1oz", "v22": 1276, "v26": 914, "pct": -28.4}];
+
+const GREEN_GAIN = '#2d9d6e';
+const GREEN_LOSS = '#c84b2a';
+const RED_GAIN   = '#e06060';
+const RED_LOSS   = '#c84b2a';
+const GRAY       = '#b0b8c1';
+const RED_BASE   = '#d4252a';
+const RED_LIGHT  = '#e8888b';
+
+function makeChart(canvasId, data, gainColor, lossColor, label22, label26) {
+  const labels  = data.map(d => d.n);
+  const v22     = data.map(d => d.v22);
+  const v26     = data.map(d => d.v26);
+  const colors26 = data.map(d => d.v26 >= d.v22 ? gainColor : lossColor);
+  const pcts    = data.map(d => (d.pct > 0 ? '+' : '') + d.pct.toFixed(1) + '%');
+  const maxV    = Math.max(...v22, ...v26) * 1.12;
+  const h       = Math.max(320, data.length * 44 + 80);
+  const canvas  = document.getElementById(canvasId);
+  canvas.style.height = h + 'px';
+
+  return new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: label22,
+          data: v22,
+          backgroundColor: GRAY,
+          borderRadius: 3,
+          borderSkipped: false,
+        },
+        {
+          label: label26,
+          data: v26,
+          backgroundColor: colors26,
+          borderRadius: 3,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => ctx[0].label,
+            label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString('es-CO') + ' votos',
+            afterBody: ctx => {
+              const i = ctx[0].dataIndex;
+              return ['  Δ ' + (data[i].pct > 0 ? '+' : '') + data[i].pct + '%'];
+            }
+          }
+        },
+        datalabels: { display: false }
+      },
+      scales: {
+        x: {
+          max: maxV,
+          ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v, font: { size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        },
+        y: {
+          ticks: { font: { size: 11.5 }, color: '#333' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// Draw pct change annotations on top of bars
+Chart.register({
+  id: 'pctLabel',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const data = chart.config._data;
+    if (!data) return;
+    ctx.save();
+    ctx.font = '600 10.5px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    data.forEach((d, i) => {
+      const meta = chart.getDatasetMeta(1);
+      const bar  = meta.data[i];
+      if (!bar) return;
+      const sign = d.pct >= 0 ? '+' : '';
+      const txt  = sign + d.pct.toFixed(1) + '%';
+      const col  = d.pct >= 0 ? '#1a7a4a' : '#9a2b1a';
+      ctx.fillStyle = col;
+      ctx.fillText(txt, bar.x + 5, bar.y);
+    });
+    ctx.restore();
+  }
+});
+
+const cceChart = makeChart('cce-chart', CCE, GREEN_GAIN, GREEN_LOSS, 'CCE 2022', 'APC/Verde 2026');
+cceChart.config._data = CCE;
+
+const libChart = makeChart('lib-chart', LIB, RED_LIGHT, RED_BASE, 'Liberal 2022', 'Liberal 2026');
+libChart.config._data = LIB;
+
+function exportPNG(which) {
+  const chart  = which === 'cce' ? cceChart : libChart;
+  const wrap   = document.getElementById('wrap-' + which);
+  const title  = which === 'cce'
+    ? 'CCE 2022 → Alianza Verde 2026 · Candidatos repetidos'
+    : 'Partido Liberal · Candidatos repetidos 2022 vs 2026';
+
+  // Create offscreen canvas with title + legend + chart
+  const src    = chart.canvas;
+  const W      = src.width;
+  const H      = src.height;
+  const PAD    = 48;
+  const off    = document.createElement('canvas');
+  off.width    = W + PAD * 2;
+  off.height   = H + 110;
+  const ctx    = off.getContext('2d');
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, off.width, off.height);
+
+  // Title
+  ctx.fillStyle = '#111';
+  ctx.font = '700 15px Inter, sans-serif';
+  ctx.fillText(title, PAD, 28);
+
+  // Sub
+  ctx.fillStyle = '#888';
+  ctx.font = '12px Inter, sans-serif';
+  const sub = which === 'cce'
+    ? 'Candidatos que compitieron en CCE (2022) y Alianza por Colombia/Verde (2026)'
+    : 'Candidatos que compitieron en el Partido Liberal en 2022 y 2026';
+  ctx.fillText(sub, PAD, 48);
+
+  // Legend
+  const items = which === 'cce'
+    ? [['#b0b8c1','CCE 2022'],['#2d9d6e','APC/Verde 2026 (ganancia)'],['#c84b2a','APC/Verde 2026 (caída)']]
+    : [['#b0b8c1','Liberal 2022'],['#e8888b','Liberal 2026 (ganancia)'],['#d4252a','Liberal 2026 (caída)']];
+  let lx = PAD;
+  items.forEach(([col, lbl]) => {
+    ctx.fillStyle = col;
+    ctx.fillRect(lx, 62, 12, 12);
+    ctx.fillStyle = '#444';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillText(lbl, lx + 17, 73);
+    lx += ctx.measureText(lbl).width + 40;
+  });
+
+  // Chart image
+  ctx.drawImage(src, PAD, 92);
+
+  // Footer
+  ctx.fillStyle = '#bbb';
+  ctx.font = '10px Inter, sans-serif';
+  ctx.fillText('Fuente: Registraduría · Preconteo Senado ' + (which==='cce'?'2022–2026':'2022–2026'), PAD, off.height - 12);
+
+  const link  = document.createElement('a');
+  link.download = which === 'cce' ? 'cce_apc_candidatos_repetidos.png' : 'liberal_candidatos_repetidos.png';
+  link.href   = off.toDataURL('image/png');
+  link.click();
+}
+</script>
+</body>
+</html>

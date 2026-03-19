@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senado de Colombia — 1990–2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2f2f0;
+    --surface: #ffffff;
+    --border: #d8d8d4;
+    --text: #1a1a1a;
+    --muted: #888880;
+    --accent: #1a1a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 2.5rem 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .page-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .page-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+  }
+
+  .section { margin-bottom: 3rem; }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .controls {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+
+  .tab-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+
+  .tab-btn:hover { border-color: var(--text); color: var(--text); }
+  .tab-btn.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+
+  .note {
+    background: #eceae6;
+    border-left: 3px solid var(--muted);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 1.2rem;
+  }
+  .note strong { color: var(--text); }
+
+  .chart-wrap { overflow-x: auto; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1.1rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 0.15s;
+    user-select: none;
+  }
+  .legend-item:hover { color: var(--text); }
+  .legend-item.dimmed { opacity: 0.28; }
+
+  .legend-swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .source {
+    margin-top: 0.75rem;
+    font-size: 0.65rem;
+    color: #bbb;
+    letter-spacing: 0.04em;
+  }
+
+  /* Tooltips */
+  .tip {
+    position: fixed;
+    background: #fff;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 0.7rem 0.9rem;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    z-index: 999;
+    max-width: 230px;
+    min-width: 160px;
+  }
+  .tip.on { opacity: 1; }
+  .tip-year {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .tip-row { display: flex; align-items: center; gap: 0.38rem; }
+  .tip-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .tip-label { flex: 1; color: var(--muted); }
+  .tip-val { font-weight: 600; color: var(--text); }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="page-eyebrow">República de Colombia · Poder Legislativo</div>
+  <h1 class="page-title">Senado de la República<br>1990 – 2026</h1>
+  <p class="page-subtitle">Distribución de escaños y votos por partido · Elecciones legislativas</p>
+</header>
+
+<!-- SECTION 1: LINES / STACKED / VOTES -->
+<div class="section">
+  <div class="section-title">Evolución por partido</div>
+  <div class="note">
+    <strong>Nota:</strong> En 1991 la nueva Constitución redujo el Senado de 114 a 102 escaños. En 2018–2022 se sumaron escaños especiales (paz, afro, indígenas). En 2026 la circunscripción nacional volvió a 100 escaños.
+  </div>
+  <div class="controls">
+    <button class="tab-btn active" onclick="setMode('lines')">Líneas — escaños</button>
+    <button class="tab-btn" onclick="setMode('stacked')">Barras apiladas</button>
+    <button class="tab-btn" onclick="setMode('votes')">Votos</button>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+  <div class="legend" id="mainLegend"></div>
+  <div class="source">Fuentes: Wikipedia ES · Registraduría Nacional del Estado Civil · Congreso Visible</div>
+</div>
+
+<!-- SECTION 2: ALLUVIAL -->
+<div class="section">
+  <div class="section-title">Flujo de escaños entre elecciones — diagrama aluvial</div>
+  <div class="note">
+    Cada columna vertical es una elección. Cada bloque de color es un partido; su altura es proporcional a sus escaños. Las bandas curvas muestran la <strong>continuidad estimada</strong> de cada corriente política entre elecciones consecutivas. Partidos con nombre distinto pero genealogía común están vinculados (ej. Lista de la Decencia → Pacto Histórico).
+  </div>
+  <div class="chart-wrap" id="alluvialWrap">
+    <canvas id="alluvialCanvas"></canvas>
+  </div>
+  <div class="legend" id="alluvialLegend"></div>
+  <div class="source">Visualización aluvial · escaños por partido 1990–2026</div>
+</div>
+
+<div class="tip" id="tip1"></div>
+<div class="tip" id="tip2"></div>
+
+<script>
+// ─── COLORS ──────────────────────────────────────────────────────────────────
+const C = {
+  'Partido Liberal':    '#e63946',
+  'P. Conservador':     '#1d63c8',
+  'M.N. Conservador':   '#6090e0',
+  'AD M-19':            '#d46800',
+  'Nueva Fuerza Dem.':  '#7744cc',
+  'M. Salvación Nac.':  '#0099bb',
+  'Oxígeno Liberal':    '#f77f00',
+  'Partido de la U':    '#f4a52b',
+  'Centro Dem.':        '#0077b6',
+  'Cambio Radical':     '#e07010',
+  'Polo Dem. Alt.':     '#a020a0',
+  'Alianza Verde':      '#2a9d5c',
+  'Pacto Histórico':    '#6a28d0',
+  'MIRA':               '#c01030',
+  'Lista Decencia':     '#6a28d0',
+  'Comunes':            '#607080',
+  'Col. Justa Libres':  '#607080',
+  'Convergencia Ciud.': '#999990',
+  'Opción Ciudadana':   '#999990',
+  'PIN':                '#888880',
+  'Equipo Colombia':    '#c09020',
+  'M. Int. Popular':    '#c09020',
+  'Coaliciones':        '#b0aea8',
+  'Otros':              '#c8c6c0',
+  'Otros / Ind.':       '#c8c6c0',
+  'Unión x la Gente':   '#f4a52b',
+  'CR – ALMA':          '#e07010',
+  '¡Ahora Colombia!':   '#607080',
+  'Verde + Ce. Esp.':   '#2a9d5c',
+  'Alianza x Colombia': '#2a9d5c',
+  'MIRA–CJL':           '#c01030',
+};
+
+function rgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ─── PARTY GENEALOGY ─────────────────────────────────────────────────────────
+// Maps each party name to a canonical "lineage key" so flows connect across
+// name changes.
+const LINEAGE = {
+  'Partido Liberal':    'liberal',
+  'P. Conservador':     'conservador',
+  'M.N. Conservador':   'mnc',
+  'AD M-19':            'm19',
+  'Nueva Fuerza Dem.':  'nfd',
+  'M. Salvación Nac.':  'msn',
+  'Oxígeno Liberal':    'oxigeno',
+  'Partido de la U':    'u',
+  'Unión x la Gente':   'u',          // 2026 successor to U
+  'Equipo Colombia':    'u',           // predecessor of U
+  'Centro Dem.':        'cd',
+  'Cambio Radical':     'cr',
+  'CR – ALMA':          'cr',          // 2026
+  'Polo Dem. Alt.':     'pacto',      // precursor del Pacto Histórico
+  'Alianza Verde':      'verde',
+  'Verde + Ce. Esp.':   'verde',
+  'Alianza x Colombia': 'verde',
+  'Pacto Histórico':    'pacto',
+  'Lista Decencia':     'pacto',       // predecessor
+  'MIRA':               'mira',
+  'MIRA–CJL':           'mira',
+  'Col. Justa Libres':  'cjl',
+  'Comunes':            'comunes',
+  '¡Ahora Colombia!':   'ahora',
+  'Convergencia Ciud.': 'otros_min',
+  'Opción Ciudadana':   'otros_min',
+  'PIN':                'otros_min',
+  'Equipo Colombia':    'otros_min',
+  'M. Int. Popular':    'otros_min',
+  'Coaliciones':        'otros',
+  'Otros':              'otros',
+  'Otros / Ind.':       'otros',
+};
+
+// Representative color per lineage (pick from whichever name comes first)
+const LINEAGE_COLOR = {};
+Object.entries(LINEAGE).forEach(([name, lin]) => {
+  if (!LINEAGE_COLOR[lin]) LINEAGE_COLOR[lin] = C[name] || '#aaa';
+});
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const elections = [
+  { year: 1990, total: 114, parties: [
+    { name: 'Partido Liberal',   seats: 66, votes: 4470853 },
+    { name: 'P. Conservador',    seats: 38, votes: 2383363 },
+    { name: 'M.N. Conservador',  seats:  1, votes:  147953 },
+    { name: 'Otros',             seats:  9, votes:  624241 },
+  ]},
+  { year: 1991, total: 102, parties: [
+    { name: 'Partido Liberal',   seats: 58, votes: 2349033 },
+    { name: 'P. Conservador',    seats: 14, votes:  562128 },
+    { name: 'AD M-19',           seats:  9, votes:  454467 },
+    { name: 'Nueva Fuerza Dem.', seats:  8, votes:  436562 },
+    { name: 'M. Salvación Nac.', seats:  5, votes:  234358 },
+    { name: 'Otros',             seats:  8, votes:  331214 },
+  ]},
+  { year: 1994, total: 102, parties: [
+    { name: 'Partido Liberal',   seats: 56, votes: 2621200 },
+    { name: 'P. Conservador',    seats: 20, votes: 1099430 },
+    { name: 'M. Salvación Nac.', seats:  2, votes:  153180 },
+    { name: 'Coaliciones',       seats:  9, votes:  380000 },
+    { name: 'Otros',             seats: 15, votes:  520000 },
+  ]},
+  { year: 1998, total: 102, parties: [
+    { name: 'Partido Liberal',   seats: 48, votes: 3200000 },
+    { name: 'P. Conservador',    seats: 15, votes: 1400000 },
+    { name: 'M.N. Conservador',  seats:  7, votes:  650000 },
+    { name: 'Oxígeno Liberal',   seats:  2, votes:  300000 },
+    { name: 'Otros / Ind.',      seats: 30, votes: 1800000 },
+  ]},
+  { year: 2002, total: 102, parties: [
+    { name: 'Partido Liberal',   seats: 29, votes: 2200000 },
+    { name: 'P. Conservador',    seats: 13, votes: 1100000 },
+    { name: 'M.N. Conservador',  seats:  6, votes:  550000 },
+    { name: 'Equipo Colombia',   seats:  4, votes:  380000 },
+    { name: 'M. Int. Popular',   seats:  4, votes:  360000 },
+    { name: 'Cambio Radical',    seats:  2, votes:  200000 },
+    { name: 'Otros / Ind.',      seats: 44, votes: 2800000 },
+  ]},
+  { year: 2006, total: 102, parties: [
+    { name: 'Partido de la U',   seats: 20, votes: 1600000 },
+    { name: 'P. Conservador',    seats: 18, votes: 1450000 },
+    { name: 'Partido Liberal',   seats: 18, votes: 1450000 },
+    { name: 'Cambio Radical',    seats: 15, votes: 1200000 },
+    { name: 'Polo Dem. Alt.',    seats: 10, votes:  800000 },
+    { name: 'Convergencia Ciud.',seats:  7, votes:  560000 },
+    { name: 'Otros',             seats: 14, votes: 1100000 },
+  ]},
+  { year: 2010, total: 102, parties: [
+    { name: 'Partido de la U',   seats: 28, votes: 2792944 },
+    { name: 'P. Conservador',    seats: 22, votes: 2257335 },
+    { name: 'Partido Liberal',   seats: 17, votes: 1724151 },
+    { name: 'PIN',               seats:  9, votes:  892720 },
+    { name: 'Cambio Radical',    seats:  8, votes:  861816 },
+    { name: 'Polo Dem. Alt.',    seats:  8, votes:  824948 },
+    { name: 'Alianza Verde',     seats:  5, votes:  521503 },
+    { name: 'MIRA',              seats:  3, votes:  324109 },
+  ]},
+  { year: 2014, total: 102, parties: [
+    { name: 'Partido de la U',   seats: 21, votes: 2230208 },
+    { name: 'Centro Dem.',       seats: 19, votes: 2045564 },
+    { name: 'P. Conservador',    seats: 18, votes: 1944284 },
+    { name: 'Partido Liberal',   seats: 17, votes: 1748789 },
+    { name: 'Cambio Radical',    seats:  9, votes:  996872 },
+    { name: 'Alianza Verde',     seats:  5, votes:  564663 },
+    { name: 'Polo Dem. Alt.',    seats:  5, votes:  541145 },
+    { name: 'Opción Ciudadana',  seats:  5, votes:  527124 },
+    { name: 'MIRA',              seats:  2, votes:  326943 },
+  ]},
+  { year: 2018, total: 107, parties: [
+    { name: 'Centro Dem.',       seats: 19, votes: 2513320 },
+    { name: 'Cambio Radical',    seats: 16, votes: 2155487 },
+    { name: 'P. Conservador',    seats: 14, votes: 1927320 },
+    { name: 'Partido Liberal',   seats: 14, votes: 1901933 },
+    { name: 'Partido de la U',   seats: 14, votes: 1853054 },
+    { name: 'Alianza Verde',     seats:  9, votes: 1317429 },
+    { name: 'Polo Dem. Alt.',    seats:  5, votes:  736367 },
+    { name: 'Lista Decencia',    seats:  4, votes:  523286 },
+    { name: 'MIRA',              seats:  3, votes:  501489 },
+    { name: 'Col. Justa Libres', seats:  3, votes:  431506 },
+  ]},
+  { year: 2022, total: 108, parties: [
+    { name: 'Pacto Histórico',   seats: 20, votes: 2880254 },
+    { name: 'P. Conservador',    seats: 15, votes: 2238678 },
+    { name: 'Partido Liberal',   seats: 14, votes: 2112528 },
+    { name: 'Verde + Ce. Esp.',  seats: 13, votes: 1958369 },
+    { name: 'Centro Dem.',       seats: 13, votes: 1949905 },
+    { name: 'Cambio Radical',    seats: 11, votes: 1609173 },
+    { name: 'Partido de la U',   seats: 10, votes: 1506567 },
+    { name: 'MIRA–CJL',          seats:  4, votes:  584806 },
+    { name: 'Comunes',           seats:  5, votes:   25708 },
+  ]},
+  { year: 2026, total: 100, parties: [
+    { name: 'Pacto Histórico',    seats: 25, votes: 4413636 },
+    { name: 'Centro Dem.',        seats: 17, votes: 3035715 },
+    { name: 'Partido Liberal',    seats: 13, votes: 2275182 },
+    { name: 'Alianza x Colombia', seats: 10, votes: 1904154 },
+    { name: 'P. Conservador',     seats: 10, votes: 1863663 },
+    { name: 'Unión x la Gente',   seats:  9, votes: 1565786 },
+    { name: 'CR – ALMA',          seats:  7, votes: 1248021 },
+    { name: '¡Ahora Colombia!',   seats:  5, votes:  900606 },
+    { name: 'M. Salvación Nac.',  seats:  4, votes:  705924 },
+  ]},
+];
+
+const years = elections.map(e => e.year);
+const partyTotals = {};
+elections.forEach(e => e.parties.forEach(p => {
+  partyTotals[p.name] = (partyTotals[p.name] || 0) + p.seats;
+}));
+const allParties = Object.keys(partyTotals).sort((a,b) => partyTotals[b] - partyTotals[a]);
+const hiddenParties = new Set();
+
+// ─── SHARED CANVAS HELPERS ───────────────────────────────────────────────────
+const DPR = window.devicePixelRatio || 1;
+
+function setupCanvas(id, cssW, cssH) {
+  const c = document.getElementById(id);
+  c.style.width  = cssW + 'px';
+  c.style.height = cssH + 'px';
+  c.width  = Math.round(cssW * DPR);
+  c.height = Math.round(cssH * DPR);
+  const ctx = c.getContext('2d');
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  return { c, ctx, w: cssW, h: cssH };
+}
+
+// ─── MAIN CHART ──────────────────────────────────────────────────────────────
+let mode = 'lines';
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['lines','stacked','votes'][i] === m);
+  });
+  drawMain();
+}
+
+function drawMain() {
+  const wrapW = document.querySelector('.chart-wrap').clientWidth;
+  const W = Math.max(wrapW, 680), H = 380;
+  const { c, ctx } = setupCanvas('mainCanvas', W, H);
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { t: 24, r: 28, b: 44, l: 48 };
+  const cw = W - PAD.l - PAD.r;
+  const ch = H - PAD.t - PAD.b;
+  const isV = mode === 'votes';
+  const isSt = mode === 'stacked';
+
+  let maxVal = 0;
+  if (isSt) {
+    elections.forEach(e => { const s = e.parties.reduce((a,p)=>a+p.seats,0); if(s>maxVal) maxVal=s; });
+    maxVal = Math.ceil(maxVal/20)*20 + 10;
+  } else if (isV) {
+    elections.forEach(e => e.parties.forEach(p => { if(p.votes>maxVal) maxVal=p.votes; }));
+    maxVal = Math.ceil(maxVal/1e6)*1e6;
+  } else {
+    elections.forEach(e => e.parties.forEach(p => { if(p.seats>maxVal) maxVal=p.seats; }));
+    maxVal = Math.ceil(maxVal/10)*10 + 5;
+  }
+
+  const xS = i => PAD.l + (i/(years.length-1))*cw;
+  const yS = v => PAD.t + ch - (v/maxVal)*ch;
+
+  // Grid
+  const ticks = isSt ? [0,25,50,75,100,114] : isV ? [0,1e6,2e6,3e6,4e6] : [0,15,30,45,60];
+  ctx.font = "11px 'Barlow', sans-serif";
+  ctx.textAlign = 'right';
+  ticks.forEach(v => {
+    const y = yS(v);
+    ctx.strokeStyle = v===0 ? '#ccc' : '#e8e6e2';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(PAD.l+cw,y); ctx.stroke();
+    ctx.fillStyle = '#aaa';
+    ctx.fillText(isV ? (v/1e6).toFixed(0)+'M' : v, PAD.l-6, y+4);
+  });
+
+  ctx.fillStyle = '#888';
+  ctx.textAlign = 'center';
+  years.forEach((yr,i) => ctx.fillText(yr, xS(i), PAD.t+ch+18));
+
+  if (isSt) {
+    const bw = Math.min(cw/years.length*0.55, 42);
+    elections.forEach((e,i) => {
+      let cum = 0;
+      e.parties.forEach(p => {
+        if (hiddenParties.has(p.name) || p.seats===0) return;
+        ctx.fillStyle = C[p.name]||'#aaa';
+        ctx.fillRect(xS(i)-bw/2, yS(cum+p.seats), bw, p.seats/maxVal*ch);
+        cum += p.seats;
+      });
+      ctx.fillStyle='#444'; ctx.font="bold 10px 'Barlow Condensed',sans-serif"; ctx.textAlign='center';
+      ctx.fillText(e.total, xS(i), yS(e.total)-4);
+    });
+  } else {
+    // Total dashed
+    ctx.strokeStyle='#ddd'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    elections.forEach((e,i) => {
+      const v = isV ? e.parties.reduce((s,p)=>s+p.votes,0) : e.total;
+      i===0 ? ctx.moveTo(xS(i),yS(v)) : ctx.lineTo(xS(i),yS(v));
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+
+    allParties.forEach(name => {
+      if (hiddenParties.has(name)) return;
+      const col = C[name]||'#aaa';
+      ctx.strokeStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath();
+      let started = false;
+      elections.forEach((e,i) => {
+        const p = e.parties.find(p=>p.name===name);
+        const v = isV ? (p?p.votes:0) : (p?p.seats:0);
+        if (!v) { started=false; return; }
+        started ? ctx.lineTo(xS(i),yS(v)) : ctx.moveTo(xS(i),yS(v));
+        started = true;
+      });
+      ctx.stroke();
+      elections.forEach((e,i) => {
+        const p = e.parties.find(p=>p.name===name);
+        const v = isV ? (p?p.votes:0) : (p?p.seats:0);
+        if (!v) return;
+        ctx.beginPath(); ctx.arc(xS(i),yS(v),3.5,0,Math.PI*2);
+        ctx.fillStyle=col; ctx.fill();
+      });
+    });
+  }
+
+  // Hover
+  c.onmousemove = ev => {
+    const rect = c.getBoundingClientRect();
+    const mx = ev.clientX - rect.left;
+    let ci=null, md=Infinity;
+    years.forEach((_,i) => { const d=Math.abs(mx-xS(i)); if(d<md){md=d;ci=i;} });
+    if (ci!==null && md<65) showTip('tip1', ev.clientX, ev.clientY, elections[ci], isV);
+    else hideTip('tip1');
+  };
+  c.onmouseleave = () => hideTip('tip1');
+
+  buildMainLegend();
+}
+
+function showTip(id, cx, cy, e, isV) {
+  const t = document.getElementById(id);
+  let html = `<div class="tip-year">${e.year}</div>`;
+  html += `<div class="tip-row"><span class="tip-label">Total escaños</span><span class="tip-val">${e.total}</span></div>`;
+  e.parties.forEach(p => {
+    const v = isV ? (p.votes/1e6).toFixed(2)+'M' : p.seats;
+    html += `<div class="tip-row"><span class="tip-dot" style="background:${C[p.name]||'#aaa'}"></span><span class="tip-label">${p.name}</span><span class="tip-val">${v}</span></div>`;
+  });
+  t.innerHTML = html;
+  t.classList.add('on');
+  const left = (cx+240>window.innerWidth) ? cx-250 : cx+14;
+  t.style.left = left+'px';
+  t.style.top = Math.min(cy-20, window.innerHeight-260)+'px';
+}
+
+function hideTip(id) { document.getElementById(id).classList.remove('on'); }
+
+function buildMainLegend() {
+  const leg = document.getElementById('mainLegend');
+  leg.innerHTML = '';
+  allParties.slice(0,20).forEach(name => {
+    const item = document.createElement('div');
+    item.className = 'legend-item'+(hiddenParties.has(name)?' dimmed':'');
+    item.innerHTML = `<span class="legend-swatch" style="background:${C[name]||'#aaa'}"></span>${name}`;
+    item.onclick = () => { hiddenParties.has(name)?hiddenParties.delete(name):hiddenParties.add(name); drawMain(); };
+    leg.appendChild(item);
+  });
+}
+
+// ─── ALLUVIAL CHART ───────────────────────────────────────────────────────────
+function drawAlluvial() {
+  const wrapW = document.getElementById('alluvialWrap').clientWidth;
+  const N = elections.length; // 11 elections
+  const NODE_W  = 16;
+  const GAP     = 2;          // gap between stacked nodes within a column
+  const H       = 600;
+  const PAD     = { t: 38, b: 32, l: 130, r: 130 };
+  const drawH   = H - PAD.t - PAD.b;
+  const colSpan = Math.max((wrapW - PAD.l - PAD.r - NODE_W) / (N-1), 72);
+  const W       = Math.max(PAD.l + PAD.r + NODE_W + colSpan*(N-1), 920);
+
+  const { c, ctx } = setupCanvas('alluvialCanvas', W, H);
+  ctx.clearRect(0, 0, W, H);
+
+  const maxTotal = Math.max(...elections.map(e=>e.total));
+  const scale = drawH / (maxTotal + 8); // px per seat
+
+  // ── Build nodes ──────────────────────────────────────────────────────────
+  // Each node: { name, lineage, seats, color, x, y, h, ei }
+  // Sort by lineage for consistent vertical ordering across elections
+  const LINEAGE_ORDER = [
+    'liberal','conservador','u','cd','cr','verde','pacto',
+    'mira','msn','m19','nfd','mnc','oxigeno','cjl','comunes','ahora',
+    'otros_min','otros',
+  ];
+
+  function lineageRank(name) {
+    const lin = LINEAGE[name] || 'otros';
+    const r = LINEAGE_ORDER.indexOf(lin);
+    return r === -1 ? 99 : r;
+  }
+
+  const colNodes = elections.map((e, ei) => {
+    const cx = PAD.l + ei * colSpan;
+    const active = e.parties.filter(p => p.seats > 0);
+    active.sort((a,b) => lineageRank(a.name) - lineageRank(b.name));
+
+    const totalH = active.reduce((s,p) => s + p.seats*scale, 0) + (active.length-1)*GAP;
+    let y = PAD.t + (drawH - totalH) / 2;
+
+    return active.map(p => {
+      const nodeH = p.seats * scale;
+      const node = {
+        name: p.name,
+        lineage: LINEAGE[p.name] || p.name,
+        seats: p.seats,
+        color: C[p.name] || '#aaa',
+        x: cx, y, h: nodeH, ei,
+      };
+      y += nodeH + GAP;
+      return node;
+    });
+  });
+
+  // ── Draw ribbons ──────────────────────────────────────────────────────────
+  // For each consecutive pair of elections, match nodes by lineage.
+  // Track how much of each node's height has been "consumed" by outgoing/incoming ribbons.
+  for (let ei = 0; ei < N-1; ei++) {
+    const leftCol  = colNodes[ei];
+    const rightCol = colNodes[ei+1];
+
+    // Group nodes by lineage
+    const leftByLin  = {};
+    const rightByLin = {};
+    leftCol.forEach(n  => (leftByLin[n.lineage]  = n));
+    rightCol.forEach(n => (rightByLin[n.lineage] = n));
+
+    // Offset trackers (how many px consumed so far on each node side)
+    const leftUsed  = {};
+    const rightUsed = {};
+
+    // Iterate in lineage order for consistent stacking
+    LINEAGE_ORDER.forEach(lin => {
+      const ln = leftByLin[lin];
+      const rn = rightByLin[lin];
+      if (!ln || !rn) return;
+
+      const flow   = Math.min(ln.seats, rn.seats);
+      const flowH  = flow * scale;
+      if (flowH < 0.5) return;
+
+      const lUsed = leftUsed[lin]  || 0;
+      const rUsed = rightUsed[lin] || 0;
+
+      const x1 = ln.x + NODE_W;
+      const x2 = rn.x;
+      const ly1 = ln.y + lUsed;
+      const ly2 = ln.y + lUsed + flowH;
+      const ry1 = rn.y + rUsed;
+      const ry2 = rn.y + rUsed + flowH;
+
+      leftUsed[lin]  = lUsed + flowH + GAP;
+      rightUsed[lin] = rUsed + flowH + GAP;
+
+      const cpX = (x1 + x2) / 2;
+
+      // Ribbon fill
+      ctx.beginPath();
+      ctx.moveTo(x1, ly1);
+      ctx.bezierCurveTo(cpX, ly1, cpX, ry1, x2, ry1);
+      ctx.lineTo(x2, ry2);
+      ctx.bezierCurveTo(cpX, ry2, cpX, ly2, x1, ly2);
+      ctx.closePath();
+      ctx.fillStyle = rgba(ln.color, 0.25);
+      ctx.fill();
+
+      // Ribbon top & bottom edge lines (subtle)
+      ctx.strokeStyle = rgba(ln.color, 0.5);
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, ly1);
+      ctx.bezierCurveTo(cpX, ly1, cpX, ry1, x2, ry1);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x1, ly2);
+      ctx.bezierCurveTo(cpX, ly2, cpX, ry2, x2, ry2);
+      ctx.stroke();
+    });
+  }
+
+  // ── Draw nodes ────────────────────────────────────────────────────────────
+  colNodes.forEach((nodes, ei) => {
+    nodes.forEach(n => {
+      ctx.fillStyle = n.color;
+      ctx.fillRect(n.x, n.y, NODE_W, n.h);
+    });
+
+    // Year label
+    ctx.font = "600 11px 'Barlow Condensed', sans-serif";
+    ctx.fillStyle = '#555';
+    ctx.textAlign = 'center';
+    const nodeX = (colNodes[ei][0]?.x ?? 0) + NODE_W/2;
+    ctx.fillText(elections[ei].year, nodeX, PAD.t - 14);
+
+    // Total seats label below column
+    const lastNode = nodes[nodes.length-1];
+    if (lastNode) {
+      ctx.font = "500 9px 'Barlow', sans-serif";
+      ctx.fillStyle = '#aaa';
+      ctx.textAlign = 'center';
+      ctx.fillText(elections[ei].total+' esc.', nodeX, lastNode.y + lastNode.h + 13);
+    }
+  });
+
+  // ── Party labels (first and last column) ─────────────────────────────────
+  function labelNode(n, side) {
+    if (n.h < 7) return;
+    const fs = Math.min(10, Math.max(7.5, n.h * 0.55));
+    ctx.font = `500 ${fs}px 'Barlow', sans-serif`;
+    ctx.fillStyle = '#333';
+    if (side === 'left') {
+      ctx.textAlign = 'right';
+      ctx.fillText(n.name, n.x - 5, n.y + n.h/2 + fs*0.35);
+    } else {
+      ctx.textAlign = 'left';
+      ctx.fillText(n.name, n.x + NODE_W + 5, n.y + n.h/2 + fs*0.35);
+    }
+  }
+
+  colNodes[0].forEach(n => labelNode(n, 'left'));
+  colNodes[N-1].forEach(n => labelNode(n, 'right'));
+
+  // ── Hover ────────────────────────────────────────────────────────────────
+  c.onmousemove = ev => {
+    const rect = c.getBoundingClientRect();
+    const mx = ev.clientX - rect.left;
+    const my = ev.clientY - rect.top;
+    let hit = null;
+    colNodes.forEach((nodes, ei) => {
+      nodes.forEach(n => {
+        if (mx >= n.x && mx <= n.x+NODE_W && my >= n.y && my <= n.y+n.h) {
+          hit = { n, e: elections[ei] };
+        }
+      });
+    });
+    if (hit) {
+      const pct = ((hit.n.seats/hit.e.total)*100).toFixed(1);
+      const t = document.getElementById('tip2');
+      t.innerHTML = `<div class="tip-year">${hit.e.year}</div><div class="tip-row"><span class="tip-dot" style="background:${hit.n.color}"></span><span class="tip-label">${hit.n.name}</span></div><div class="tip-row"><span class="tip-label">Escaños</span><span class="tip-val">${hit.n.seats} · ${pct}%</span></div>`;
+      t.classList.add('on');
+      const left = (ev.clientX+200>window.innerWidth) ? ev.clientX-210 : ev.clientX+14;
+      t.style.left = left+'px';
+      t.style.top = (ev.clientY-20)+'px';
+    } else {
+      hideTip('tip2');
+    }
+  };
+  c.onmouseleave = () => hideTip('tip2');
+
+  buildAlluvialLegend();
+}
+
+function buildAlluvialLegend() {
+  const leg = document.getElementById('alluvialLegend');
+  leg.innerHTML = '';
+  const seen = new Set();
+  elections.forEach(e => e.parties.forEach(p => {
+    if (seen.has(p.name)) return;
+    seen.add(p.name);
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="legend-swatch" style="background:${C[p.name]||'#aaa'}"></span>${p.name}`;
+    leg.appendChild(item);
+  }));
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => { drawMain(); drawAlluvial(); });
+drawMain();
+drawAlluvial();
+</script>
+</body>
+</html>
