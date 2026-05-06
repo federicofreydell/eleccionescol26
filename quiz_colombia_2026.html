@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Con quién votas en 2026?</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; padding: 2rem 1rem; }
+.wrap { max-width: 640px; margin: 0 auto; }
+h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 2rem; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px; }
+.progress-track { height: 3px; background: #ddd; border-radius: 2px; margin-bottom: 2rem; }
+.progress-fill { height: 3px; background: #378ADD; border-radius: 2px; transition: width 0.4s ease; }
+.card { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+.qnum { font-size: 11px; color: #aaa; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.qtext { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 10px; color: #111; }
+.ctx-toggle { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #888; cursor: pointer; margin-bottom: 1rem; border: none; background: none; padding: 0; user-select: none; }
+.ctx-toggle:hover { color: #555; }
+.ctx-arrow { display: inline-block; transition: transform 0.2s; font-style: normal; }
+.ctx-arrow.open { transform: rotate(90deg); }
+.context { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 1.25rem; padding: 10px 13px; background: #f8f7f3; border-radius: 8px; border-left: 2px solid #ccc; display: none; }
+.context.visible { display: block; }
+.opts { display: flex; gap: 6px; flex-wrap: wrap; }
+.opt { flex: 1; min-width: 76px; padding: 10px 6px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-size: 11.5px; line-height: 1.4; cursor: pointer; text-align: center; transition: all 0.15s; }
+.opt:hover { background: #f5f4f0; border-color: #bbb; }
+.opt.s1 { background: #FCEBEB; border-color: #E24B4A; color: #A32D2D; font-weight: 600; }
+.opt.s2 { background: #FAEEDA; border-color: #EF9F27; color: #854F0B; font-weight: 600; }
+.opt.s3 { background: #f0ede8; border-color: #999; color: #333; font-weight: 600; }
+.opt.s4 { background: #E1F5EE; border-color: #1D9E75; color: #085041; font-weight: 600; }
+.opt.s5 { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 600; }
+.nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem; }
+.btn { padding: 10px 22px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #333; font-size: 14px; cursor: pointer; transition: all 0.15s; }
+.btn:hover { background: #f5f4f0; }
+.btn.primary { background: #378ADD; border-color: #378ADD; color: #fff; }
+.btn.primary:hover { background: #185FA5; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.warn { font-size: 13px; color: #A32D2D; margin-top: 8px; display: none; }
+.cand-card { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1.25rem; margin-bottom: 10px; display: flex; align-items: center; gap: 1rem; }
+.cand-card.top { border: 2px solid #378ADD; }
+.avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+.cname { font-size: 15px; font-weight: 600; color: #111; }
+.cparty { font-size: 12px; color: #777; margin-top: 2px; }
+.bar-track { height: 5px; background: #eee; border-radius: 3px; margin-top: 8px; }
+.bar-fill { height: 5px; border-radius: 3px; transition: width 0.7s ease; }
+.pct { font-size: 13px; font-weight: 600; color: #111; margin-top: 4px; }
+.badge { font-size: 11px; background: #E6F1FB; color: #185FA5; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
+.importance-wrap { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f0ede8; }
+.importance-label { font-size: 11px; color: #aaa; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.imp-opts { display: flex; gap: 5px; }
+.imp-btn { flex: 1; padding: 7px 4px; border: 1px solid #ddd; border-radius: 7px; background: #fff; color: #888; font-size: 11px; line-height: 1.3; cursor: pointer; text-align: center; transition: all 0.15s; }
+.imp-btn:hover { background: #f5f4f0; border-color: #bbb; }
+.imp-btn.imp-sel { background: #1a1a1a; border-color: #1a1a1a; color: #fff; font-weight: 600; }
+.s2-opts { display: flex; flex-direction: column; gap: 8px; }
+.s2-opt { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 9px; background: #fff; color: #333; font-size: 13.5px; line-height: 1.55; cursor: pointer; text-align: left; transition: all 0.15s; }
+.s2-opt:hover { background: #f5f4f0; border-color: #bbb; }
+.s2-opt.s2-sel { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+.disclaimer { font-size: 12px; color: #777; margin-top: 1.5rem; line-height: 1.7; background: #f8f7f3; padding: 12px 14px; border-radius: 8px; border-left: 2px solid #ccc; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="quiz-section">
+    <h1>¿Con quién votas en 2026?</h1>
+    <p class="subtitle">Responde 22 preguntas sobre los temas centrales del debate político colombiano. Al final, verás con qué candidato o candidata tienes mayor afinidad.</p>
+    <div class="progress-label">
+      <span id="prog-text">Pregunta 1 de 22</span>
+      <span id="prog-pct">0% completado</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div id="q-container"></div>
+    <div class="warn" id="warn">Por favor responde esta pregunta antes de continuar.</div>
+    <div class="nav">
+      <button class="btn" id="btn-prev" onclick="prevQ()" disabled>Anterior</button>
+      <button class="btn primary" id="btn-next" onclick="nextQ()">Siguiente</button>
+    </div>
+  </div>
+  <div id="results-section" style="display:none"></div>
+  <div id="s2-section" style="display:none"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "¿Qué opinas sobre la reforma a la salud impulsada por el gobierno Petro?",
+    context: "El gobierno Petro ha buscado reformar el sistema de salud, eliminando la función fiscal de las EPS y reduciendo su poder en favor de un sistema en el que el Gobierno tiene más gestión directa sobre la prestación de servicios. La reforma fue declarada inexequible por la Corte Constitucional por vicios de procedimiento, aunque el gobierno ha continuado implementando partes de ella por decreto."
+  },
+  {
+    text: "¿Qué opinas sobre la reforma pensional aprobada en el gobierno Petro?",
+    context: "El gobierno Petro reformó el sistema pensional con una estructura de pilares: todos los trabajadores aportan a Colpensiones hasta 2.3 salarios mínimos, y solo los aportes que superen ese umbral pueden ir a fondos privados. Esto aumenta significativamente el flujo de recursos hacia Colpensiones y reduce el de los fondos privados, lo que sus críticos señalan como un riesgo para la sostenibilidad fiscal a largo plazo."
+  },
+  {
+    text: "¿Qué opinas sobre la política de Paz Total?",
+    context: "La Paz Total fue la propuesta del gobierno Petro para establecer conversaciones con todos los grupos armados al margen de la ley, como 'profundización' del Acuerdo Final de Paz. Ha sido ampliamente criticada por su incapacidad de lograr desmovilizaciones efectivas y por el incremento del poder de los grupos armados, en un contexto de desmejora generalizada de la seguridad."
+  },
+  {
+    text: "¿Qué opinas sobre suspender la exploración y explotación de petróleo y gas natural?",
+    context: "El gobierno Petro tomó la decisión de detener nuevos procesos de exploración de combustibles fósiles para avanzar en la decarbonización frente al calentamiento global. Colombia perdió la autosuficiencia petrolera en diciembre de 2024 e importó cerca del 17% de su demanda nacional en el primer semestre de 2025, generando una mayor dependencia de petróleo extranjero y presión sobre las finanzas públicas."
+  },
+  {
+    text: "¿Está a favor de la utilización de fracturación hidráulica (fracking) para asegurar la soberanía energética de Colombia?",
+    context: "El fracking es una estrategia de desarrollo de nuevos recursos de hidrocarburos a través de la inyección de agua o químicos en alta presión para generar nuevos conductos en pozos existentes. Los efectos ambientales a largo plazo no están del todo conocidos, y su uso es controversial. Colombia tiene reservas potenciales significativas que podrían explorarse con esta técnica."
+  },
+  {
+    text: "¿Crees que detener la deforestación debe ser una prioridad del próximo gobierno?",
+    context: "La deforestación es la principal fuente de emisiones de carbono en Colombia. La quema de la Amazonía ha sido marcadamente reducida desde el inicio del gobierno Petro, aunque continúa. Algunos candidatos como Fajardo tienen propuestas explícitas de cero deforestación, pero en términos generales el tema recibe menos atención programática que otros ejes como seguridad o economía."
+  },
+  {
+    text: "¿Qué opinas sobre la suspensión de relaciones diplomáticas con el gobierno de Israel?",
+    context: "Colombia ha sido uno de los principales impulsores del rechazo diplomático hacia Israel por su ataque a Gaza. La Corte Internacional de Justicia ha encontrado que dicho ataque incluye tácticas violatorias al Derecho Internacional Humanitario, y existe un caso razonable de genocidio. Parte de la oposición considera a Israel un aliado natural y socio comercial estratégico del sector defensa, y defiende mantener las relaciones diplomáticas."
+  },
+  {
+    text: "¿Qué opinas sobre el enfriamiento de relaciones con el gobierno de Donald Trump?",
+    context: "Históricamente, Colombia ha sido el aliado más cercano de Estados Unidos en la región. El gobierno Petro se ha distanciado de esta posición, buscando cooperación con otros países del Sur Global e instituciones multilaterales. Esto ha generado tensiones con Washington y pone en riesgo la estabilidad comercial con el principal socio económico del país."
+  },
+  {
+    text: "¿Apoya un cambio de régimen en Venezuela?",
+    context: "Venezuela atraviesa una situación de cambio político tras una incursión militar estadounidense que resultó en la captura de Nicolás Maduro. Con tácito apoyo de Estados Unidos, el país se ha abierto a la inversión extranjera, aunque por ahora no se observan cambios importantes en su calidad democrática ni en la cúpula gobernante."
+  },
+  {
+    text: "¿Qué opinas sobre la redistribución de tierras a campesinos como eje de la Reforma Rural Integral?",
+    context: "Una de las banderas del gobierno Petro ha sido la compra y distribución de más de 700.000 hectáreas y la formalización de más de 1.8 millones de hectáreas a campesinos en situación de informalidad. El gobierno presenta la desigualdad en la tenencia de tierra —donde el 10% más rico posee el 81% de las tierras cultivables— como una de las causas estructurales del conflicto armado colombiano."
+  },
+  {
+    text: "¿Qué opinas sobre el Acuerdo Final de Paz de 2016?",
+    context: ""
+  },
+  {
+    text: "¿Qué opinas sobre la suspensión de la Regla Fiscal para favorecer el gasto público pese a la crisis de recaudación?",
+    context: "El gobierno Petro declaró un estado de emergencia económica para enfrentar un déficit fiscal agravado por caída en el recaudo, subsidios energéticos y deuda acumulada del FEPC. El Consejo de Estado tumbó la emergencia por inconstitucional, pero el endeudamiento persiste y amenaza la estabilidad económica a largo plazo."
+  },
+  {
+    text: "¿Está de acuerdo con privilegiar la inversión nacional sobre la inversión internacional?",
+    context: "El gobierno Petro ha propuesto medidas proteccionistas en el ahorro, incluyendo limitaciones a la inversión en el extranjero de fondos pensionales. El gobierno también ha sugerido alejarse de sistemas tradicionales de arbitraje de inversión."
+  },
+  {
+    text: "¿Está de acuerdo con el derecho de las mujeres a interrumpir voluntariamente su embarazo?",
+    context: "La Corte Constitucional despenalizó el aborto hasta la semana 24 de gestación en 2022, y lo permite sin límite de tiempo en tres causales: violación, malformación del feto incompatible con la vida, y riesgo para la salud o vida de la madre. Colombia es uno de los pocos países de América Latina con una regulación amplia en esta materia, lo que genera debate político y social permanente."
+  },
+  {
+    text: "¿Está de acuerdo con la igualdad constitucionalmente reconocida de la comunidad LGBT, incluida la posibilidad de adopción?",
+    context: "La Corte Constitucional y la Corte Suprema de Justicia han reconocido progresivamente derechos a las parejas del mismo sexo en Colombia, incluyendo el matrimonio igualitario (2016) y la adopción (2015). Estos derechos son reconocidos en la jurisprudencia pero no están consagrados explícitamente en la Constitución, lo que los hace potencialmente reversibles vía reforma constitucional."
+  },
+  {
+    text: "¿Está de acuerdo con la legalización recreacional de la marihuana?",
+    context: "Colombia es el mayor productor mundial de cocaína y tiene una larga historia de violencia ligada al narcotráfico. El debate sobre la legalización del cannabis recreacional se enmarca en una discusión más amplia sobre si el prohibicionismo ha fracasado como política pública. Varios países y estados han legalizado el cannabis recreacional con resultados mixtos en términos de salud pública y reducción del crimen organizado."
+  },
+  {
+    text: "¿Está de acuerdo con reemplazar el sistema de educación pública primaria por vales escolares?",
+    context: "Como senadora, Paloma Valencia ha presentado como bandera de su cuatrenio la ampliación de la educación privada a través de un sistema de vales: un subsidio que permite a los padres elegir la escuela privada a la que vayan sus hijos, cubriendo parte de su matrícula. Sus defensores argumentan que genera competencia y mejora la calidad; sus críticos, que debilita la educación pública y profundiza desigualdades."
+  },
+  {
+    text: "¿Está de acuerdo con una Reforma a la Educación que reevalúe la Ley 30?",
+    context: "El movimiento estudiantil y la izquierda han apoyado históricamente una revisión a la Ley 30 de 1992, para recuperar la inversión directa del Estado en la educación pública superior en detrimento de esquemas de becas para universidades privadas. La Ley 30 congeló el presupuesto real de las universidades públicas, generando un déficit acumulado que ha deteriorado su infraestructura y calidad."
+  },
+  {
+    text: "¿Está de acuerdo con la retoma de la aspersión aérea como herramienta en la lucha contra el narcotráfico?",
+    context: "La aspersión aérea con glifosato fue suspendida en 2015 por la Corte Constitucional tras una decisión de la OMS que clasificó el herbicida como probable cancerígeno. Durante el gobierno Uribe fue la principal herramienta de erradicación de cultivos de coca. Sus defensores argumentan que es la única forma eficaz de reducir el área cultivada a gran escala; sus críticos señalan sus efectos sobre la salud, los ecosistemas y los cultivos lícitos de campesinos."
+  },
+  {
+    text: "¿Está de acuerdo con la limitación del derecho a la protesta, como la prohibición de bloquear vías o la limitación a paros de sindicatos como FECODE?",
+    context: "El derecho a la protesta está consagrado en la Constitución colombiana, pero su ejercicio ha generado tensiones cuando implica bloqueos de vías u otras perturbaciones del orden público. Partidos de derecha y centroderecha han propuesto legislación que limite estas modalidades de protesta; la izquierda y los sindicatos las defienden como formas legítimas de presión social y laboral."
+  },
+  {
+    text: "En general, ¿apruebas o desapruebas la gestión del gobierno de Gustavo Petro?",
+    context: ""
+  },
+  {
+    text: "¿Qué opinas sobre convocar una Asamblea Nacional Constituyente?",
+    context: "El gobierno Petro se ha quejado ampliamente de la oposición política e institucional a medidas para 'profundizar el cambio'. Como respuesta, ha propuesto una Asamblea Constituyente que se salte pesos y contrapesos institucionales para implementar reformas de fondo."
+  }
+];
+
+const labels = ["Muy en contra","Algo en contra","Neutral / No sé","Algo a favor","Muy a favor"];
+const TOTAL = questions.length;
+
+const candidates = [
+  {
+    name: "Iván Cepeda Castro", party: "Pacto Histórico",
+    color: "#1D9E75", bg: "#E1F5EE", tc: "#085041", initials: "IC",
+    pos: [5,5,5,4,1,5,5,5,1,5,5,4,4,5,5,5,1,5,1,1,5,4]
+  },
+  {
+    name: "Claudia López", party: "Independiente",
+    color: "#7F77DD", bg: "#EEEDFE", tc: "#3C3489", initials: "CL",
+    pos: [3,3,2,2,4,5,3,3,2,3,4,2,3,5,5,4,2,4,2,2,2,1]
+  },
+  {
+    name: "Sergio Fajardo", party: "Dignidad y Compromiso",
+    color: "#EF9F27", bg: "#FAEEDA", tc: "#854F0B", initials: "SF",
+    pos: [2,3,2,2,2,4,2,2,3,3,3,2,2,5,5,3,3,3,2,2,2,1]
+  },
+  {
+    name: "Paloma Valencia", party: "Gran Coalición por Colombia",
+    color: "#E24B4A", bg: "#FCEBEB", tc: "#A32D2D", initials: "PV",
+    pos: [1,2,1,1,5,3,1,1,5,2,2,1,2,2,2,1,5,1,5,4,1,1]
+  },
+  {
+    name: "Abelardo de la Espriella", party: "Independiente",
+    color: "#D85A30", bg: "#FAECE7", tc: "#4A1B0C", initials: "AE",
+    pos: [1,1,1,1,5,3,1,1,5,2,2,1,2,2,2,2,4,2,5,4,1,1]
+  }
+];
+
+let current = 0;
+let answers = new Array(TOTAL).fill(null);
+let weights = new Array(TOTAL).fill(3);
+
+const impLabels = ['Poco importante','Algo importante','Neutral','Importante','Muy importante'];
+
+function toggleCtx(btn) {
+  const ctx = btn.nextElementSibling;
+  const arrow = btn.querySelector('.ctx-arrow');
+  const isOpen = ctx.classList.contains('visible');
+  ctx.classList.toggle('visible', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.querySelector('i').nextSibling.textContent = isOpen ? ' ¿Qué significa esto?' : ' Ocultar contexto';
+}
+
+function renderQ() {
+  const container = document.getElementById('q-container');
+  container.innerHTML = '';
+  const q = questions[current];
+  const card = document.createElement('div');
+  card.className = 'card';
+  const ctxHtml = q.context
+    ? `<button class="ctx-toggle" onclick="toggleCtx(this)" type="button"><i class="ctx-arrow">▶</i> ¿Qué significa esto?</button><div class="context">${q.context}</div>`
+    : '';
+  const impHtml = `
+    <div class="importance-wrap">
+      <div class="importance-label">¿Qué tan importante es este tema para ti?</div>
+      <div class="imp-opts">
+        ${impLabels.map((lbl, i) => `<button class="imp-btn${weights[current] === i+1 ? ' imp-sel' : ''}" onclick="pickWeight(${i+1})">${lbl}</button>`).join('')}
+      </div>
+    </div>`;
+  card.innerHTML = `
+    <div class="qnum">Pregunta ${current + 1} de ${TOTAL}</div>
+    <div class="qtext">${q.text}</div>
+    ${ctxHtml}
+    <div class="opts" id="opts"></div>
+    ${impHtml}
+  `;
+  container.appendChild(card);
+  const row = document.getElementById('opts');
+  labels.forEach((lbl, i) => {
+    const v = i + 1;
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (answers[current] === v ? ' s' + v : '');
+    btn.textContent = lbl;
+    btn.onclick = () => pick(v);
+    row.appendChild(btn);
+  });
+  updateProgress();
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').textContent = current === TOTAL - 1 ? 'Ver resultados' : 'Siguiente';
+  document.getElementById('warn').style.display = 'none';
+}
+
+function pick(v) {
+  answers[current] = v;
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.className = 'opt' + (i + 1 === v ? ' s' + v : '');
+  });
+  document.getElementById('warn').style.display = 'none';
+}
+
+function pickWeight(w) {
+  weights[current] = w;
+  document.querySelectorAll('.imp-btn').forEach((b, i) => {
+    b.className = 'imp-btn' + (i + 1 === w ? ' imp-sel' : '');
+  });
+}
+
+function updateProgress() {
+  const answered = answers.filter(a => a !== null).length;
+  const pct = Math.round((answered / TOTAL) * 100);
+  document.getElementById('prog-text').textContent = `Pregunta ${current + 1} de ${TOTAL}`;
+  document.getElementById('prog-pct').textContent = pct + '% completado';
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+
+function nextQ() {
+  if (answers[current] === null) { document.getElementById('warn').style.display = 'block'; return; }
+  if (current < TOTAL - 1) { current++; renderQ(); }
+  else showResults();
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQ(); }
+}
+
+// ── SECCIÓN 2 ──────────────────────────────────────────────────────────────
+// Cada pregunta tiene 5 opciones, cada una asociada a un candidato (por índice)
+// candIdx: 0=Cepeda, 1=López, 2=Fajardo, 3=Valencia, 4=De la Espriella
+const s2questions = [
+  {
+    problem: "Colombia se encuentra en una profunda crisis de liquidez en la salud, con una deuda de las EPS a los hospitales que asciende a los $25.7 billones y una escasez habitual de medicamentos.",
+    question: "Para salvar la crisis de salud, preferiría:",
+    options: [
+      { text: "Inyectar $10 billones a las EPS para que cumplan sus pagos. Auditoría y liquidación de EPS ineficientes. Promover políticas de prevención como el deporte y la nutrición.", cand: 4 },
+      { text: "Compras estatales transitorias para medicamentos prioritarios; pago de la deuda del Estado a prestadores; incrementar la atención rural.", cand: 3 },
+      { text: "Finalizar la reforma a la salud para que deje de ser un negocio; favorecer brigadas de salud y sistemas de salud comunitaria.", cand: 0 },
+      { text: "Avanzar hacia un Sistema Nacional de Salud mixto, con tablas de precios unificadas pero en el que los prestadores puedan recuperar sus finanzas.", cand: 1 },
+      { text: "Auditorías individualizadas dirigidas a las EPS con problemas de pago para asegurar la liquidez del sistema.", cand: 2 },
+    ]
+  },
+  {
+    problem: "Colombia es percibido por sus ciudadanos como un país altamente corrupto. Las percepciones sobre la corrupción han empeorado desde 2022, según el Índice de Corrupción Internacional.",
+    question: "Para resolver la corrupción en Colombia, prefiero:",
+    options: [
+      { text: "Crear un bloque de búsqueda contra los corruptos bajo órdenes directas del presidente.", cand: 4 },
+      { text: "Implementar un sistema de 'contratación en vitrina': todos los contratos estatales serán trazados por blockchain e IA.", cand: 3 },
+      { text: "Crear una agencia anticorrupción independiente, perseguir a evasores fiscales y reformar los sistemas de lobby político.", cand: 2 },
+      { text: "Crear una Fiscalía Antimafia y un Tribunal especializado contra la corrupción.", cand: 1 },
+      { text: "Crear una Unidad Nacional de Investigación de la Macrocorrupción dentro de la Fiscalía, que persiga redes completas, no individuos aislados.", cand: 0 },
+    ]
+  },
+  {
+    problem: "La tasa de criminalidad en Colombia se ha mantenido estable en los últimos 4 años, sin mejoras significativas en seguridad.",
+    question: "Para resolver la crisis de seguridad, prefiero:",
+    options: [
+      { text: "Crear 7 megacárceles y promover la cadena perpetua.", cand: 4 },
+      { text: "Nivelar salarios de la Policía para retener talento y asegurar diálogo con sectores sociales.", cand: 0 },
+      { text: "Contratar 30.000 nuevos militares y 30.000 nuevos policías; garantizar espacios públicos libres de droga.", cand: 3 },
+      { text: "Reformar las cárceles, construir 5 nuevas y aumentar en 40.000 el pie de fuerza policial. Plan integral contra el reclutamiento de menores.", cand: 2 },
+      { text: "Reformar la justicia para reducir garantías a mafias; crear una Gendarmería; reasignar funcionarios de la Procuraduría a la lucha antimafia.", cand: 1 },
+    ]
+  },
+  {
+    problem: "Los grupos armados ilegales se han expandido en los últimos cuatro años, con un crecimiento del 23,5% el último año.",
+    question: "Para enfrentar la expansión de grupos armados, prefiero:",
+    options: [
+      { text: "Abandonar la política prohibicionista de drogas y atacar la criminalidad resolviendo sus causas estructurales.", cand: 0 },
+      { text: "Priorizar el desmantelamiento de redes de lavado de activos y proteger a líderes sociales y comunidades étnicas.", cand: 2 },
+      { text: "Militarizar estratégicamente zonas con alta presencia armada, incluyendo la prestación de servicios básicos por militares.", cand: 3 },
+      { text: "Fortalecer la Fuerza Pública, la inteligencia y la cooperación internacional contra el crimen organizado.", cand: 1 },
+      { text: "Lanzar un Plan Colombia II con apoyo de EEUU e Israel; eliminar la JEP; lanzar una ofensiva militar total contra el crimen.", cand: 4 },
+    ]
+  },
+  {
+    problem: "La democracia en Colombia enfrenta una nueva oleada de violencia política. The Economist declaró el declive democrático del país por primera vez en cuatro años.",
+    question: "Para revitalizar la democracia, prefiero:",
+    options: [
+      { text: "Mejorar la independencia judicial y reformar los mecanismos de elección de organismos de control (Fiscalía, Procuraduría, Contraloría, magistrados).", cand: 2 },
+      { text: "Reformar la financiación política para garantizar la integridad de los movimientos políticos.", cand: 3 },
+      { text: "Crear mesas de diálogo en todos los niveles, reconocer la diversidad del país y permitir ejecución directa de obras por organizaciones comunitarias.", cand: 0 },
+      { text: "Combatir las mafias con justicia restaurativa para mantener el tejido social mientras se endurece la lucha contra el crimen organizado.", cand: 1 },
+      { text: "Reducir el aparato estatal en un 40% y eliminar las ideologías extremas del sistema educativo.", cand: 4 },
+    ]
+  },
+  {
+    problem: "Colombia se encuentra en su mayor déficit fiscal de la historia, el segundo más alto del mundo en 2025.",
+    question: "Para resolver la crisis fiscal, prefiero:",
+    options: [
+      { text: "Implementar una Ley de Austeridad Republicana que reduzca los gastos suntuosos del Estado manteniendo el gasto social.", cand: 0 },
+      { text: "Revisar la eficacia de los programas sociales, acordar un plan de reducción del déficit con organismos internacionales y modernizar la DIAN.", cand: 2 },
+      { text: "Retomar la regla fiscal y limitar el gasto público al crecimiento económico del país, generando condiciones para la inversión.", cand: 1 },
+      { text: "Refinanciar la deuda pública con fondos internacionales y retomar de inmediato la Regla Fiscal.", cand: 3 },
+      { text: "Recortar el gobierno en un 40%, recuperar 25 billones anuales eliminando la corrupción y ampliar la base tributaria.", cand: 4 },
+    ]
+  }
+];
+
+let s2current = 0;
+let s2answers = new Array(s2questions.length).fill(null); // índice del candidato elegido
+
+// ── PUNTUACIÓN ──────────────────────────────────────────────────────────────
+function score1(cand) {
+  let total = 0, max = 0;
+  answers.forEach((a, i) => {
+    if (a !== null) {
+      const w = weights[i] / 3;
+      total += (4 - Math.abs(a - cand.pos[i])) * w;
+      max += 4 * w;
+    }
+  });
+  return max > 0 ? (total / max) : 0;
+}
+
+function buildResultsHtml(title, subtitle, scoresFn, showS2btn) {
+  const ranked = candidates.map((c, ci) => ({ ...c, ci, pct: Math.round(scoresFn(c, ci) * 100) })).sort((a, b) => b.pct - a.pct);
+  let html = `<h1 style="font-size:22px;font-weight:600;margin-bottom:6px;">${title}</h1>
+    <p class="subtitle">${subtitle}</p>`;
+  ranked.forEach((c, idx) => {
+    html += `
+      <div class="cand-card ${idx === 0 ? 'top' : ''}">
+        <div class="avatar" style="background:${c.bg};color:${c.tc}">${c.initials}</div>
+        <div style="flex:1">
+          ${idx === 0 ? '<span class="badge">Mayor afinidad</span>' : ''}
+          <div class="cname">${c.name}</div>
+          <div class="cparty">${c.party}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${c.pct}%;background:${c.color}"></div></div>
+          <div class="pct">${c.pct}% de afinidad</div>
+        </div>
+      </div>`;
+  });
+  if (showS2btn) {
+    html += `
+      <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f8f7f3;border-radius:10px;border-left:2px solid #378ADD;">
+        <div style="font-size:14px;font-weight:600;color:#111;margin-bottom:4px;">¿Quieres afinar tu resultado?</div>
+        <div style="font-size:13px;color:#555;margin-bottom:12px;line-height:1.6;">La sección 2 te presenta propuestas concretas de cada candidato ante 6 problemas del país. Elige la que más te convenza — es opcional y tarda menos de 2 minutos.</div>
+        <button class="btn primary" onclick="startS2()">Continuar a la sección 2 →</button>
+      </div>`;
+  }
+  html += `<div class="disclaimer" style="margin-top:1rem;">Este quiz es una herramienta orientativa basada en los programas de gobierno y posiciones públicas de cada candidato. Las afinidades son aproximaciones y no reemplazan la lectura directa de sus propuestas.</div>
+    <div style="margin-top:1rem"><button class="btn" onclick="restartQuiz()">Volver a empezar</button></div>`;
+  return html;
+}
+
+function showResults() {
+  document.getElementById('quiz-section').style.display = 'none';
+  const rs = document.getElementById('results-section');
+  rs.style.display = 'block';
+  rs.innerHTML = buildResultsHtml(
+    'Tus resultados — Sección 1',
+    'Basado en tus posiciones sobre los grandes temas del debate político colombiano.',
+    (c) => score1(c),
+    true
+  );
+}
+
+// ── SECCIÓN 2 ──────────────────────────────────────────────────────────────
+function startS2() {
+  s2current = 0;
+  s2answers = new Array(s2questions.length).fill(null);
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('s2-section').style.display = 'block';
+  renderS2();
+}
+
+function renderS2() {
+  const q = s2questions[s2current];
+  const STOTAL = s2questions.length;
+  const pct = Math.round((s2current / STOTAL) * 100);
+
+  // shuffle options for display but keep cand reference
+  const opts = q.options.map((o, i) => ({ ...o, origIdx: i }));
+
+  let optHtml = opts.map((o, i) => `
+    <button class="s2-opt ${s2answers[s2current] === o.cand ? 's2-sel' : ''}"
+      onclick="pickS2(${o.cand}, this)">
+      ${o.text}
+    </button>`).join('');
+
+  document.getElementById('s2-section').innerHTML = `
+    <h1 style="font-size:22px;font-weight:600;margin-bottom:6px;">Sección 2 — Propuestas concretas</h1>
+    <p class="subtitle">Elige la propuesta que más te convenza. No se indica a qué candidato pertenece cada una.</p>
+    <div class="progress-label" style="margin-top:1rem;">
+      <span>Problema ${s2current + 1} de ${STOTAL}</span>
+      <span>${pct}% completado</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="card" style="margin-top:1rem;">
+      <div class="qnum">Problema ${s2current + 1} de ${STOTAL}</div>
+      <div style="font-size:13px;color:#555;line-height:1.65;margin-bottom:10px;padding:10px 12px;background:#f8f7f3;border-radius:8px;border-left:2px solid #ccc;">${q.problem}</div>
+      <div class="qtext" style="margin-bottom:1rem;">${q.question}</div>
+      <div class="s2-opts">${optHtml}</div>
+    </div>
+    <div class="warn" id="s2-warn" style="display:none">Por favor elige una opción antes de continuar.</div>
+    <div class="nav">
+      <button class="btn" onclick="prevS2()" ${s2current === 0 ? 'disabled' : ''}>Anterior</button>
+      <button class="btn primary" onclick="nextS2()">${s2current === STOTAL - 1 ? 'Ver resultados finales' : 'Siguiente'}</button>
+    </div>`;
+}
+
+function pickS2(candIdx, btn) {
+  s2answers[s2current] = candIdx;
+  document.querySelectorAll('.s2-opt').forEach(b => b.classList.remove('s2-sel'));
+  btn.classList.add('s2-sel');
+  document.getElementById('s2-warn').style.display = 'none';
+}
+
+function nextS2() {
+  if (s2answers[s2current] === null) { document.getElementById('s2-warn').style.display = 'block'; return; }
+  if (s2current < s2questions.length - 1) { s2current++; renderS2(); }
+  else showFinalResults();
+}
+
+function prevS2() {
+  if (s2current > 0) { s2current--; renderS2(); }
+}
+
+function showFinalResults() {
+  document.getElementById('s2-section').style.display = 'none';
+  const rs = document.getElementById('results-section');
+  rs.style.display = 'block';
+
+  // s2 bonus: cada elección suma 4 puntos al candidato elegido (equivale a acuerdo perfecto en s1)
+  const s2bonus = new Array(candidates.length).fill(0);
+  s2answers.forEach(ci => { if (ci !== null) s2bonus[ci] += 4; });
+  const s2max = s2answers.filter(a => a !== null).length * 4;
+
+  rs.innerHTML = buildResultsHtml(
+    'Tus resultados finales',
+    'Combinación de tus posiciones ideológicas (sección 1) y las propuestas concretas que elegiste (sección 2).',
+    (c, ci) => {
+      const s1raw = score1(c);
+      // Normalizar s2 a escala 0-1
+      const s2raw = s2max > 0 ? s2bonus[ci] / s2max : 0;
+      // Promedio ponderado: s1 vale 2/3, s2 vale 1/3
+      return (s1raw * 2 + s2raw) / 3;
+    },
+    false
+  );
+}
+
+function restartQuiz() {
+  current = 0;
+  answers = new Array(TOTAL).fill(null);
+  weights = new Array(TOTAL).fill(3);
+  s2current = 0;
+  s2answers = new Array(s2questions.length).fill(null);
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('s2-section').style.display = 'none';
+  document.getElementById('quiz-section').style.display = 'block';
+  renderQ();
+}
+
+renderQ();
+</script>
+</body>
+</html>
