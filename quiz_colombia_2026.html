@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>¿Con quién votas en 2026?</title>
+<title>¿Por quién debería votar a la Presidencia?</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; padding: 2rem 1rem; }
-.wrap { max-width: 640px; margin: 0 auto; }
-h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+.wrap { max-width: 660px; margin: 0 auto; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
 .subtitle { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 2rem; }
 .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px; }
 .progress-track { height: 3px; background: #ddd; border-radius: 2px; margin-bottom: 2rem; }
@@ -16,20 +16,30 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
 .card { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
 .qnum { font-size: 11px; color: #aaa; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
 .qtext { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 10px; color: #111; }
-.ctx-toggle { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #888; cursor: pointer; margin-bottom: 1rem; border: none; background: none; padding: 0; user-select: none; }
-.ctx-toggle:hover { color: #555; }
-.ctx-arrow { display: inline-block; transition: transform 0.2s; font-style: normal; }
+.ctx-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #555; cursor: pointer; margin-bottom: 10px; border: none; background: none; padding: 0; user-select: none; }
+.ctx-toggle:hover { color: #111; }
+.ctx-arrow { display: inline-block; transition: transform 0.2s; font-style: normal; font-size: 11px; }
 .ctx-arrow.open { transform: rotate(90deg); }
-.context { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 1.25rem; padding: 10px 13px; background: #f8f7f3; border-radius: 8px; border-left: 2px solid #ccc; display: none; }
+.context { font-size: 13px; font-weight: 500; color: #333; line-height: 1.75; margin-bottom: 1.25rem; padding: 12px 14px; background: #f8f7f3; border-radius: 8px; border-left: 3px solid #aaa; display: none; }
 .context.visible { display: block; }
-.opts { display: flex; gap: 6px; flex-wrap: wrap; }
-.opt { flex: 1; min-width: 76px; padding: 10px 6px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-size: 11.5px; line-height: 1.4; cursor: pointer; text-align: center; transition: all 0.15s; }
+.opts-wrap { display: flex; flex-direction: column; gap: 6px; }
+.opts-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.opt { flex: 1; min-width: 0; padding: 8px 4px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-size: 10.5px; line-height: 1.35; cursor: pointer; text-align: center; transition: all 0.15s; word-break: keep-all; hyphens: none; }
 .opt:hover { background: #f5f4f0; border-color: #bbb; }
 .opt.s1 { background: #FCEBEB; border-color: #E24B4A; color: #A32D2D; font-weight: 600; }
 .opt.s2 { background: #FAEEDA; border-color: #EF9F27; color: #854F0B; font-weight: 600; }
 .opt.s3 { background: #f0ede8; border-color: #999; color: #333; font-weight: 600; }
 .opt.s4 { background: #E1F5EE; border-color: #1D9E75; color: #085041; font-weight: 600; }
 .opt.s5 { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 600; }
+.opt-ns { width: 100%; padding: 8px 12px; border: 1px dashed #ccc; border-radius: 8px; background: #fff; color: #999; font-size: 11px; cursor: pointer; text-align: center; transition: all 0.15s; margin-top: 2px; }
+.opt-ns:hover { background: #f5f4f0; border-color: #aaa; color: #666; }
+.opt-ns.sns { background: #f0ede8; border-color: #888; color: #444; font-weight: 600; border-style: solid; }
+.importance-wrap { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f0ede8; }
+.importance-label { font-size: 11px; color: #aaa; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.imp-opts { display: flex; gap: 4px; }
+.imp-btn { flex: 1; padding: 7px 3px; border: 1px solid #ddd; border-radius: 7px; background: #fff; color: #888; font-size: 10px; line-height: 1.3; cursor: pointer; text-align: center; transition: all 0.15s; }
+.imp-btn:hover { background: #f5f4f0; border-color: #bbb; }
+.imp-btn.imp-sel { background: #1a1a1a; border-color: #1a1a1a; color: #fff; font-weight: 600; }
 .nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem; }
 .btn { padding: 10px 22px; border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #333; font-size: 14px; cursor: pointer; transition: all 0.15s; }
 .btn:hover { background: #f5f4f0; }
@@ -39,33 +49,52 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
 .warn { font-size: 13px; color: #A32D2D; margin-top: 8px; display: none; }
 .cand-card { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1.25rem; margin-bottom: 10px; display: flex; align-items: center; gap: 1rem; }
 .cand-card.top { border: 2px solid #378ADD; }
-.avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
 .cname { font-size: 15px; font-weight: 600; color: #111; }
 .cparty { font-size: 12px; color: #777; margin-top: 2px; }
 .bar-track { height: 5px; background: #eee; border-radius: 3px; margin-top: 8px; }
 .bar-fill { height: 5px; border-radius: 3px; transition: width 0.7s ease; }
 .pct { font-size: 13px; font-weight: 600; color: #111; margin-top: 4px; }
 .badge { font-size: 11px; background: #E6F1FB; color: #185FA5; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
-.importance-wrap { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f0ede8; }
-.importance-label { font-size: 11px; color: #aaa; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-.imp-opts { display: flex; gap: 5px; }
-.imp-btn { flex: 1; padding: 7px 4px; border: 1px solid #ddd; border-radius: 7px; background: #fff; color: #888; font-size: 11px; line-height: 1.3; cursor: pointer; text-align: center; transition: all 0.15s; }
-.imp-btn:hover { background: #f5f4f0; border-color: #bbb; }
-.imp-btn.imp-sel { background: #1a1a1a; border-color: #1a1a1a; color: #fff; font-weight: 600; }
+.opt-nosei { width:100%; margin-top:2px; padding:8px 10px; border:1px dashed #bbb; border-radius:8px; background:#fafafa; color:#999; font-size:11.5px; cursor:pointer; text-align:center; transition:all 0.15s; }
+.opt-nosei:hover { background:#f5f4f0; border-color:#888; color:#555; }
+.opt-nosei.nosei-sel { background:#f0ede8; border-color:#888; color:#333; font-weight:600; border-style:solid; }
+.s2-nosei { font-style: italic; color: #999; border-style: dashed; }
+.disclaimer { font-size: 12px; color: #777; margin-top: 1.5rem; line-height: 1.7; background: #f8f7f3; padding: 12px 14px; border-radius: 8px; border-left: 2px solid #ccc; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid #e8e6e0; margin-bottom: 1.5rem; overflow-x: auto; }
+.tab { padding: 10px 14px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; transition: all 0.15s; }
+.tab.active { color: #378ADD; border-bottom-color: #378ADD; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.chart-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+.chart-grid-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e0ddd7; }
+.chart-grid-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #e0ddd7; }
+.ax-lbl { position: absolute; font-size: 10px; color: #bbb; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.chart-dot { position: absolute; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; transform: translate(-50%,-50%); box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 2; }
+.chart-dot.user-dot { width: 40px; height: 40px; background: #1a1a1a !important; color: #fff !important; font-size: 11px; box-shadow: 0 3px 10px rgba(0,0,0,0.3); z-index: 10; }
+.chart-lbl { position: absolute; font-size: 9px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); text-align: center; z-index: 3; }
+.compare-q { background: #fff; border: 1px solid #e8e6e0; border-radius: 10px; padding: 1rem; margin-bottom: 10px; }
+.compare-qtitle { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 10px; line-height: 1.5; }
+.compare-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.compare-who { font-size: 11px; font-weight: 700; min-width: 28px; }
+.compare-bar-bg { flex: 1; height: 7px; background: #f0ede8; border-radius: 4px; position: relative; }
+.compare-bar-fill { height: 7px; border-radius: 4px; position: absolute; left: 0; top: 0; }
+.compare-val { font-size: 10px; color: #888; min-width: 72px; text-align: right; white-space: nowrap; }
 .s2-opts { display: flex; flex-direction: column; gap: 8px; }
-.s2-opt { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 9px; background: #fff; color: #333; font-size: 13.5px; line-height: 1.55; cursor: pointer; text-align: left; transition: all 0.15s; }
+.s2-opt { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 9px; background: #fff; color: #333; font-size: 13px; line-height: 1.55; cursor: pointer; text-align: left; transition: all 0.15s; }
 .s2-opt:hover { background: #f5f4f0; border-color: #bbb; }
 .s2-opt.s2-sel { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
-.disclaimer { font-size: 12px; color: #777; margin-top: 1.5rem; line-height: 1.7; background: #f8f7f3; padding: 12px 14px; border-radius: 8px; border-left: 2px solid #ccc; }
+.s2-ns { font-style: italic; color: #999 !important; border-style: dashed !important; }
+.s2-ns.s2-sel { background: #f0ede8 !important; border-color: #888 !important; color: #444 !important; border-style: solid !important; font-style: normal !important; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div id="quiz-section">
-    <h1>¿Con quién votas en 2026?</h1>
-    <p class="subtitle">Responde 22 preguntas sobre los temas centrales del debate político colombiano. Al final, verás con qué candidato o candidata tienes mayor afinidad.</p>
+    <h1>¿Por quién debería votar a la Presidencia?</h1>
+    <p class="subtitle">Responde 24 preguntas sobre los temas centrales del debate político colombiano. Al final verá qué candidato o candidata se acerca más a sus posiciones.</p>
     <div class="progress-label">
-      <span id="prog-text">Pregunta 1 de 22</span>
+      <span id="prog-text">Pregunta 1 de 24</span>
       <span id="prog-pct">0% completado</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
@@ -79,441 +108,276 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; }
   <div id="results-section" style="display:none"></div>
   <div id="s2-section" style="display:none"></div>
 </div>
-
 <script>
-const questions = [
-  {
-    text: "¿Qué opinas sobre la reforma a la salud impulsada por el gobierno Petro?",
-    context: "El gobierno Petro ha buscado reformar el sistema de salud, eliminando la función fiscal de las EPS y reduciendo su poder en favor de un sistema en el que el Gobierno tiene más gestión directa sobre la prestación de servicios. La reforma fue declarada inexequible por la Corte Constitucional por vicios de procedimiento, aunque el gobierno ha continuado implementando partes de ella por decreto."
-  },
-  {
-    text: "¿Qué opinas sobre la reforma pensional aprobada en el gobierno Petro?",
-    context: "El gobierno Petro reformó el sistema pensional con una estructura de pilares: todos los trabajadores aportan a Colpensiones hasta 2.3 salarios mínimos, y solo los aportes que superen ese umbral pueden ir a fondos privados. Esto aumenta significativamente el flujo de recursos hacia Colpensiones y reduce el de los fondos privados, lo que sus críticos señalan como un riesgo para la sostenibilidad fiscal a largo plazo."
-  },
-  {
-    text: "¿Qué opinas sobre la política de Paz Total?",
-    context: "La Paz Total fue la propuesta del gobierno Petro para establecer conversaciones con todos los grupos armados al margen de la ley, como 'profundización' del Acuerdo Final de Paz. Ha sido ampliamente criticada por su incapacidad de lograr desmovilizaciones efectivas y por el incremento del poder de los grupos armados, en un contexto de desmejora generalizada de la seguridad."
-  },
-  {
-    text: "¿Qué opinas sobre suspender la exploración y explotación de petróleo y gas natural?",
-    context: "El gobierno Petro tomó la decisión de detener nuevos procesos de exploración de combustibles fósiles para avanzar en la decarbonización frente al calentamiento global. Colombia perdió la autosuficiencia petrolera en diciembre de 2024 e importó cerca del 17% de su demanda nacional en el primer semestre de 2025, generando una mayor dependencia de petróleo extranjero y presión sobre las finanzas públicas."
-  },
-  {
-    text: "¿Está a favor de la utilización de fracturación hidráulica (fracking) para asegurar la soberanía energética de Colombia?",
-    context: "El fracking es una estrategia de desarrollo de nuevos recursos de hidrocarburos a través de la inyección de agua o químicos en alta presión para generar nuevos conductos en pozos existentes. Los efectos ambientales a largo plazo no están del todo conocidos, y su uso es controversial. Colombia tiene reservas potenciales significativas que podrían explorarse con esta técnica."
-  },
-  {
-    text: "¿Crees que detener la deforestación debe ser una prioridad del próximo gobierno?",
-    context: "La deforestación es la principal fuente de emisiones de carbono en Colombia. La quema de la Amazonía ha sido marcadamente reducida desde el inicio del gobierno Petro, aunque continúa. Algunos candidatos como Fajardo tienen propuestas explícitas de cero deforestación, pero en términos generales el tema recibe menos atención programática que otros ejes como seguridad o economía."
-  },
-  {
-    text: "¿Qué opinas sobre la suspensión de relaciones diplomáticas con el gobierno de Israel?",
-    context: "Colombia ha sido uno de los principales impulsores del rechazo diplomático hacia Israel por su ataque a Gaza. La Corte Internacional de Justicia ha encontrado que dicho ataque incluye tácticas violatorias al Derecho Internacional Humanitario, y existe un caso razonable de genocidio. Parte de la oposición considera a Israel un aliado natural y socio comercial estratégico del sector defensa, y defiende mantener las relaciones diplomáticas."
-  },
-  {
-    text: "¿Qué opinas sobre el enfriamiento de relaciones con el gobierno de Donald Trump?",
-    context: "Históricamente, Colombia ha sido el aliado más cercano de Estados Unidos en la región. El gobierno Petro se ha distanciado de esta posición, buscando cooperación con otros países del Sur Global e instituciones multilaterales. Esto ha generado tensiones con Washington y pone en riesgo la estabilidad comercial con el principal socio económico del país."
-  },
-  {
-    text: "¿Apoya un cambio de régimen en Venezuela?",
-    context: "Venezuela atraviesa una situación de cambio político tras una incursión militar estadounidense que resultó en la captura de Nicolás Maduro. Con tácito apoyo de Estados Unidos, el país se ha abierto a la inversión extranjera, aunque por ahora no se observan cambios importantes en su calidad democrática ni en la cúpula gobernante."
-  },
-  {
-    text: "¿Qué opinas sobre la redistribución de tierras a campesinos como eje de la Reforma Rural Integral?",
-    context: "Una de las banderas del gobierno Petro ha sido la compra y distribución de más de 700.000 hectáreas y la formalización de más de 1.8 millones de hectáreas a campesinos en situación de informalidad. El gobierno presenta la desigualdad en la tenencia de tierra —donde el 10% más rico posee el 81% de las tierras cultivables— como una de las causas estructurales del conflicto armado colombiano."
-  },
-  {
-    text: "¿Qué opinas sobre el Acuerdo Final de Paz de 2016?",
-    context: ""
-  },
-  {
-    text: "¿Qué opinas sobre la suspensión de la Regla Fiscal para favorecer el gasto público pese a la crisis de recaudación?",
-    context: "El gobierno Petro declaró un estado de emergencia económica para enfrentar un déficit fiscal agravado por caída en el recaudo, subsidios energéticos y deuda acumulada del FEPC. El Consejo de Estado tumbó la emergencia por inconstitucional, pero el endeudamiento persiste y amenaza la estabilidad económica a largo plazo."
-  },
-  {
-    text: "¿Está de acuerdo con privilegiar la inversión nacional sobre la inversión internacional?",
-    context: "El gobierno Petro ha propuesto medidas proteccionistas en el ahorro, incluyendo limitaciones a la inversión en el extranjero de fondos pensionales. El gobierno también ha sugerido alejarse de sistemas tradicionales de arbitraje de inversión."
-  },
-  {
-    text: "¿Está de acuerdo con el derecho de las mujeres a interrumpir voluntariamente su embarazo?",
-    context: "La Corte Constitucional despenalizó el aborto hasta la semana 24 de gestación en 2022, y lo permite sin límite de tiempo en tres causales: violación, malformación del feto incompatible con la vida, y riesgo para la salud o vida de la madre. Colombia es uno de los pocos países de América Latina con una regulación amplia en esta materia, lo que genera debate político y social permanente."
-  },
-  {
-    text: "¿Está de acuerdo con la igualdad constitucionalmente reconocida de la comunidad LGBT, incluida la posibilidad de adopción?",
-    context: "La Corte Constitucional y la Corte Suprema de Justicia han reconocido progresivamente derechos a las parejas del mismo sexo en Colombia, incluyendo el matrimonio igualitario (2016) y la adopción (2015). Estos derechos son reconocidos en la jurisprudencia pero no están consagrados explícitamente en la Constitución, lo que los hace potencialmente reversibles vía reforma constitucional."
-  },
-  {
-    text: "¿Está de acuerdo con la legalización recreacional de la marihuana?",
-    context: "Colombia es el mayor productor mundial de cocaína y tiene una larga historia de violencia ligada al narcotráfico. El debate sobre la legalización del cannabis recreacional se enmarca en una discusión más amplia sobre si el prohibicionismo ha fracasado como política pública. Varios países y estados han legalizado el cannabis recreacional con resultados mixtos en términos de salud pública y reducción del crimen organizado."
-  },
-  {
-    text: "¿Está de acuerdo con reemplazar el sistema de educación pública primaria por vales escolares?",
-    context: "Como senadora, Paloma Valencia ha presentado como bandera de su cuatrenio la ampliación de la educación privada a través de un sistema de vales: un subsidio que permite a los padres elegir la escuela privada a la que vayan sus hijos, cubriendo parte de su matrícula. Sus defensores argumentan que genera competencia y mejora la calidad; sus críticos, que debilita la educación pública y profundiza desigualdades."
-  },
-  {
-    text: "¿Está de acuerdo con una Reforma a la Educación que reevalúe la Ley 30?",
-    context: "El movimiento estudiantil y la izquierda han apoyado históricamente una revisión a la Ley 30 de 1992, para recuperar la inversión directa del Estado en la educación pública superior en detrimento de esquemas de becas para universidades privadas. La Ley 30 congeló el presupuesto real de las universidades públicas, generando un déficit acumulado que ha deteriorado su infraestructura y calidad."
-  },
-  {
-    text: "¿Está de acuerdo con la retoma de la aspersión aérea como herramienta en la lucha contra el narcotráfico?",
-    context: "La aspersión aérea con glifosato fue suspendida en 2015 por la Corte Constitucional tras una decisión de la OMS que clasificó el herbicida como probable cancerígeno. Durante el gobierno Uribe fue la principal herramienta de erradicación de cultivos de coca. Sus defensores argumentan que es la única forma eficaz de reducir el área cultivada a gran escala; sus críticos señalan sus efectos sobre la salud, los ecosistemas y los cultivos lícitos de campesinos."
-  },
-  {
-    text: "¿Está de acuerdo con la limitación del derecho a la protesta, como la prohibición de bloquear vías o la limitación a paros de sindicatos como FECODE?",
-    context: "El derecho a la protesta está consagrado en la Constitución colombiana, pero su ejercicio ha generado tensiones cuando implica bloqueos de vías u otras perturbaciones del orden público. Partidos de derecha y centroderecha han propuesto legislación que limite estas modalidades de protesta; la izquierda y los sindicatos las defienden como formas legítimas de presión social y laboral."
-  },
-  {
-    text: "En general, ¿apruebas o desapruebas la gestión del gobierno de Gustavo Petro?",
-    context: ""
-  },
-  {
-    text: "¿Qué opinas sobre convocar una Asamblea Nacional Constituyente?",
-    context: "El gobierno Petro se ha quejado ampliamente de la oposición política e institucional a medidas para 'profundizar el cambio'. Como respuesta, ha propuesto una Asamblea Constituyente que se salte pesos y contrapesos institucionales para implementar reformas de fondo."
-  }
+const questions=[{text:"¿Qué opina sobre la reforma a la salud impulsada por el gobierno Petro?",context:"El gobierno Petro ha buscado reformar el sistema de salud, eliminando la función fiscal de las EPS y reduciendo su poder en favor de un sistema en el que el Estado tiene más gestión directa sobre la prestación de servicios. La reforma fue declarada inexequible por la Corte Constitucional por vicios de procedimiento, aunque el gobierno ha continuado implementando partes de ella por decreto."},{text:"¿Qué opina sobre la reforma pensional aprobada en el gobierno Petro?",context:"El gobierno Petro reformó el sistema pensional con una estructura de pilares: todos los trabajadores aportan a Colpensiones hasta 2.3 salarios mínimos, y solo los aportes que superen ese umbral pueden ir a fondos privados. Esto aumenta significativamente el flujo de recursos hacia Colpensiones y reduce el de los fondos privados, lo que sus críticos señalan como un riesgo para la sostenibilidad fiscal a largo plazo."},{text:"¿Qué opina sobre la política de Paz Total?",context:"La Paz Total fue la propuesta del gobierno Petro para establecer conversaciones con todos los grupos armados al margen de la ley, como 'profundización' del Acuerdo Final de Paz. Ha sido ampliamente criticada por su incapacidad de lograr desmovilizaciones efectivas y por el incremento del poder de los grupos armados, en un contexto de desmejora generalizada de la seguridad."},{text:"¿Qué opina sobre suspender la exploración y explotación de petróleo y gas natural?",context:"El gobierno Petro tomó la decisión de detener nuevos procesos de exploración de combustibles fósiles para avanzar en la decarbonización frente al calentamiento global. Colombia perdió la autosuficiencia petrolera en diciembre de 2024 e importó cerca del 17% de su demanda nacional en el primer semestre de 2025, generando una mayor dependencia de petróleo extranjero y presión sobre las finanzas públicas."},{text:"¿Está a favor de la utilización de fracturación hidráulica (fracking) para asegurar la soberanía energética de Colombia?",context:"El fracking es una estrategia de desarrollo de nuevos recursos de hidrocarburos mediante la inyección de agua o químicos a alta presión para generar nuevos conductos en pozos existentes. Los efectos ambientales a largo plazo no están del todo conocidos y su uso es controversial. Colombia tiene reservas potenciales significativas que podrían explorarse con esta técnica."},{text:"¿Cree que detener la deforestación debe ser una prioridad del próximo gobierno?",context:"La deforestación es la principal fuente de emisiones de carbono en Colombia. La quema de la Amazonía ha sido marcadamente reducida desde el inicio del gobierno actual, aunque continúa. Algunos programas de gobierno incluyen propuestas explícitas de cero deforestación, pero en términos generales el tema recibe menos atención programática que otros ejes como seguridad o economía."},{text:"¿Qué opina sobre la suspensión de relaciones diplomáticas con el gobierno de Israel?",context:"Colombia ha sido uno de los principales impulsores del rechazo diplomático hacia Israel por su ataque a Gaza. La Corte Internacional de Justicia ha encontrado que dicho ataque incluye tácticas violatorias al Derecho Internacional Humanitario, y existe un caso razonable de genocidio. Parte de la oposición considera a Israel un aliado natural y socio comercial estratégico del sector defensa, y defiende mantener las relaciones diplomáticas."},{text:"¿Qué opina sobre el enfriamiento de relaciones con el gobierno de Donald Trump?",context:"Históricamente, Colombia ha sido el aliado más cercano de Estados Unidos en la región. El gobierno actual se ha distanciado de esta posición, buscando cooperación con otros países del Sur Global e instituciones multilaterales. Esto ha generado tensiones con Washington y pone en riesgo la estabilidad comercial con el principal socio económico del país."},{text:"¿Apoya un cambio de régimen en Venezuela?",context:"Venezuela atraviesa una situación de cambio político tras una incursión militar estadounidense que resultó en la captura de Nicolás Maduro. Con tácito apoyo de Estados Unidos, el país se ha abierto a la inversión extranjera, aunque por ahora no se observan cambios importantes en su calidad democrática ni en la cúpula gobernante."},{text:"¿Qué opina sobre la redistribución de tierras a campesinos como eje de la Reforma Rural Integral?",context:"Una de las banderas del gobierno actual ha sido la compra y distribución de más de 700.000 hectáreas y la formalización de más de 1.8 millones de hectáreas a campesinos en situación de informalidad. Se presenta la desigualdad en la tenencia de tierra —donde el 10% más rico posee el 81% de las tierras cultivables— como una de las causas estructurales del conflicto armado colombiano."},{text:"¿Qué opina sobre el Acuerdo Final de Paz de 2016?",context:""},{text:"¿El Gobierno debe seguir subiendo el salario mínimo significativamente por encima de tasas de inflación?",context:"Los últimos dos gobiernos han tenido subidas históricamente altas del salario mínimo ante falta de concertación entre sindicatos y gremios empresariales. El alza de 2026 fue del 23%, la más alta desde 1997. El Gobierno defiende estas alzas con base en la necesidad de mejorar las condiciones de los colombianos más pobres, mientras que sus críticos argumentan que el crecimiento rápido del salario mínimo genera problemas para los empresarios y presiones inflacionarias. Algunos candidatos han propuesto reformar el mecanismo de negociación para que el Gobierno no tenga poder unilateral sobre el resultado."},{text:"Ante oposición del Congreso, las Cortes, el Banco de la República y otros organismos de control, ¿el Presidente debe priorizar el cumplimiento de sus metas sobre respetar el balance de poderes?",context:"Ningún candidato tendrá mayoría asegurada en el Congreso, lo que dificultará la ejecución de reformas de fondo. Gobiernos anteriores han buscado debilitar el balance de poderes argumentando que deben cumplir sus promesas electorales. La tensión entre eficacia ejecutiva e independencia institucional es uno de los debates más profundos de la democracia colombiana."},{text:"¿Qué opina sobre la suspensión de la Regla Fiscal para favorecer el gasto público pese a la crisis de recaudación?",context:"El gobierno declaró un estado de emergencia económica para enfrentar un déficit fiscal agravado por caída en el recaudo, subsidios energéticos y deuda acumulada del FEPC. El Consejo de Estado tumbó la emergencia por inconstitucional, pero el endeudamiento persiste y amenaza la estabilidad económica a largo plazo."},{text:"¿Está de acuerdo con privilegiar la inversión nacional sobre la inversión internacional?",context:"El gobierno actual ha propuesto medidas proteccionistas en el ahorro, incluyendo limitaciones a la inversión en el extranjero de fondos pensionales. También ha sugerido alejarse de sistemas tradicionales de arbitraje de inversión y ha denunciado varios Tratados Bilaterales de Inversión."},{text:"¿Está de acuerdo con el derecho de las mujeres a interrumpir voluntariamente su embarazo?",context:"La Corte Constitucional despenalizó el aborto hasta la semana 24 de gestación en 2022, y lo permite sin límite de tiempo en tres causales: violación, malformación del feto incompatible con la vida, y riesgo para la salud o vida de la madre. Colombia es uno de los pocos países de América Latina con una regulación amplia en esta materia, lo que genera debate político y social permanente."},{text:"¿Está de acuerdo con la igualdad constitucionalmente reconocida de la comunidad LGBT, incluida la posibilidad de adopción?",context:"La Corte Constitucional y la Corte Suprema de Justicia han reconocido progresivamente derechos a las parejas del mismo sexo en Colombia, incluyendo el matrimonio igualitario (2016) y la adopción (2015). Estos derechos son reconocidos en la jurisprudencia pero no están consagrados explícitamente en la Constitución, lo que los hace potencialmente reversibles vía reforma constitucional."},{text:"¿Está de acuerdo con la legalización recreacional de la marihuana?",context:"Colombia es el mayor productor mundial de cocaína y tiene una larga historia de violencia ligada al narcotráfico. El debate sobre la legalización del cannabis recreacional se enmarca en una discusión más amplia sobre si el prohibicionismo ha fracasado como política pública. Varios países y estados han legalizado el cannabis recreacional con resultados mixtos en salud pública y reducción del crimen organizado."},{text:"¿Está de acuerdo con reemplazar el sistema de educación pública primaria por vales escolares?",context:"El sistema de vales escolares es un subsidio que permite a los padres elegir la escuela privada a la que asistan sus hijos, cubriendo parte de la matrícula con recursos públicos. Sus defensores argumentan que genera competencia y mejora la calidad educativa; sus críticos sostienen que debilita la educación pública y profundiza desigualdades."},{text:"¿Está de acuerdo con una Reforma a la Educación que reevalúe la Ley 30?",context:"El movimiento estudiantil ha apoyado históricamente una revisión a la Ley 30 de 1992, para recuperar la inversión directa del Estado en la educación pública superior en detrimento de esquemas de becas para universidades privadas. La Ley 30 congeló el presupuesto real de las universidades públicas, generando un déficit acumulado que ha deteriorado su infraestructura y calidad."},{text:"¿Está de acuerdo con la retoma de la aspersión aérea como herramienta en la lucha contra el narcotráfico?",context:"La aspersión aérea con glifosato fue suspendida en 2015 por la Corte Constitucional tras una decisión de la OMS que clasificó el herbicida como probable cancerígeno. Fue la principal herramienta de erradicación de cultivos de coca durante varios gobiernos. Sus defensores argumentan que es la única forma eficaz de reducir el área cultivada a gran escala; sus críticos señalan sus efectos sobre la salud, los ecosistemas y los cultivos lícitos de campesinos."},{text:"¿Está de acuerdo con la limitación del derecho a la protesta, como la prohibición de bloquear vías o la limitación a paros de sindicatos como FECODE?",context:"El derecho a la protesta está consagrado en la Constitución colombiana, pero su ejercicio ha generado tensiones cuando implica bloqueos de vías u otras perturbaciones del orden público. Partidos de derecha y centroderecha han propuesto legislación que limite estas modalidades de protesta; la izquierda y los sindicatos las defienden como formas legítimas de presión social y laboral."},{text:"En general, ¿apruebas o desapruebas la gestión del gobierno de Gustavo Petro?",context:""},{text:"¿Qué opina sobre convocar una Asamblea Nacional Constituyente?",context:"El gobierno actual se ha quejado ampliamente de la oposición política e institucional a medidas de cambio. Como respuesta, ha propuesto una Asamblea Constituyente que permitiría implementar reformas de fondo por fuera de los pesos y contrapesos institucionales ordinarios."}];
+
+const labels5=["Muy en contra","Algo en contra","Neutral","Algo a favor","Muy a favor"];
+const impLabels=["Nada importante","Poco importante","Algo importante","Importante","Muy importante"];
+const TOTAL=questions.length;
+
+const candidates=[
+  {name:"Iván Cepeda",party:"Pacto Histórico",color:"#1D9E75",bg:"#E1F5EE",tc:"#085041",initials:"IC",photo:"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",econ:-4.5,cult:4.5,pos:[5,5,5,4,1,4,5,5,1,5,5,5,4,4,4,5,5,5,1,5,1,1,5,4]},
+  {name:"Claudia López",party:"Independiente",color:"#7F77DD",bg:"#EEEDFE",tc:"#3C3489",initials:"CL",photo:"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",econ:-1.8,cult:3.8,pos:[4,4,2,2,4,5,4,3,2,4,5,3,2,2,3,5,5,4,2,4,2,2,2,1]},
+  {name:"Sergio Fajardo",party:"Dignidad y Compromiso",color:"#EF9F27",bg:"#FAEEDA",tc:"#854F0B",initials:"SF",photo:"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",econ:0.2,cult:2.0,pos:[2,4,2,2,2,5,2,2,4,4,4,2,2,2,2,5,5,4,2,3,2,2,2,1]},
+  {name:"Paloma Valencia",party:"Gran Coalición por Colombia",color:"#1A5FA8",bg:"#E6F0FB",tc:"#0D3464",initials:"PV",photo:"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",econ:4.0,cult:-3.2,pos:[1,1,1,1,5,3,1,1,5,3,1,1,2,1,1,2,2,1,5,1,5,4,1,1]},
+  {name:"Abelardo de la Espriella",party:"Independiente",color:"#3B9DD4",bg:"#DFF1FB",tc:"#14506E",initials:"AE",photo:"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",econ:3.2,cult:-3.5,pos:[1,1,1,1,5,2,1,1,5,2,2,1,4,1,4,2,2,2,4,2,5,4,1,1]}
 ];
 
-const labels = ["Muy en contra","Algo en contra","Neutral / No sé","Algo a favor","Muy a favor"];
-const TOTAL = questions.length;
+const qAxes=[{econ:-1,cult:0},{econ:-1,cult:0},{econ:0,cult:1},{econ:-1,cult:1},{econ:1,cult:0},{econ:0,cult:1},{econ:0,cult:1},{econ:0,cult:1},{econ:1,cult:-1},{econ:-1,cult:0},{econ:0,cult:1},{econ:-1,cult:0},{econ:0,cult:-1},{econ:-1,cult:0},{econ:-1,cult:0},{econ:0,cult:1},{econ:0,cult:1},{econ:0,cult:1},{econ:1,cult:-1},{econ:-1,cult:1},{econ:1,cult:-1},{econ:1,cult:-1},{econ:-1,cult:0},{econ:-1,cult:-1}];
 
-const candidates = [
-  {
-    name: "Iván Cepeda Castro", party: "Pacto Histórico",
-    color: "#1D9E75", bg: "#E1F5EE", tc: "#085041", initials: "IC",
-    pos: [5,5,5,4,1,5,5,5,1,5,5,4,4,5,5,5,1,5,1,1,5,4]
-  },
-  {
-    name: "Claudia López", party: "Independiente",
-    color: "#7F77DD", bg: "#EEEDFE", tc: "#3C3489", initials: "CL",
-    pos: [3,3,2,2,4,5,3,3,2,3,4,2,3,5,5,4,2,4,2,2,2,1]
-  },
-  {
-    name: "Sergio Fajardo", party: "Dignidad y Compromiso",
-    color: "#EF9F27", bg: "#FAEEDA", tc: "#854F0B", initials: "SF",
-    pos: [2,3,2,2,2,4,2,2,3,3,3,2,2,5,5,3,3,3,2,2,2,1]
-  },
-  {
-    name: "Paloma Valencia", party: "Gran Coalición por Colombia",
-    color: "#E24B4A", bg: "#FCEBEB", tc: "#A32D2D", initials: "PV",
-    pos: [1,2,1,1,5,3,1,1,5,2,2,1,2,2,2,1,5,1,5,4,1,1]
-  },
-  {
-    name: "Abelardo de la Espriella", party: "Independiente",
-    color: "#D85A30", bg: "#FAECE7", tc: "#4A1B0C", initials: "AE",
-    pos: [1,1,1,1,5,3,1,1,5,2,2,1,2,2,2,2,4,2,5,4,1,1]
-  }
-];
+const s2questions=[{problem:"Colombia se encuentra en una profunda crisis de liquidez en la salud, con una deuda de las EPS a los hospitales que asciende a los $25.7 billones y una escasez habitual de medicamentos.",question:"Para salvar la crisis de salud, preferiría:",options:[{text:"Inyectar $10 billones a las EPS para que cumplan sus pagos. Auditoría y liquidación de EPS ineficientes. Promover políticas de prevención como el deporte y la nutrición.",cand:4},{text:"Compras estatales transitorias para medicamentos prioritarios; pago de la deuda del Estado a prestadores; incrementar la atención rural.",cand:3},{text:"Finalizar la reforma a la salud para que deje de ser un negocio; favorecer brigadas de salud y sistemas de salud comunitaria.",cand:0},{text:"Avanzar hacia un Sistema Nacional de Salud mixto, con tablas de precios unificadas pero en el que los prestadores puedan recuperar sus finanzas.",cand:1},{text:"Auditorías individualizadas dirigidas a las EPS con problemas de pago para asegurar la liquidez del sistema.",cand:2}]},{problem:"Colombia es percibido por sus ciudadanos como un país altamente corrupto. Las percepciones sobre la corrupción han empeorado desde 2022, según el Índice de Corrupción Internacional.",question:"Para resolver la corrupción en Colombia, prefiero:",options:[{text:"Crear un bloque de búsqueda contra los corruptos bajo órdenes directas del presidente.",cand:4},{text:"Implementar un sistema de 'contratación en vitrina': todos los contratos estatales serán trazados por blockchain e IA.",cand:3},{text:"Crear una agencia anticorrupción independiente, perseguir a evasores fiscales y reformar los sistemas de lobby político.",cand:2},{text:"Crear una Fiscalía Antimafia y un Tribunal especializado contra la corrupción.",cand:1},{text:"Crear una Unidad Nacional de Investigación de la Macrocorrupción dentro de la Fiscalía, que persiga redes completas, no individuos aislados.",cand:0}]},{problem:"La tasa de criminalidad en Colombia se ha mantenido estable en los últimos 4 años, sin mejoras significativas en seguridad.",question:"Para resolver la crisis de seguridad, prefiero:",options:[{text:"Crear 7 megacárceles y promover la cadena perpetua.",cand:4},{text:"Nivelar salarios de la Policía para retener talento y asegurar diálogo con sectores sociales.",cand:0},{text:"Contratar 30.000 nuevos militares y 30.000 nuevos policías; garantizar espacios públicos libres de droga.",cand:3},{text:"Reformar las cárceles, construir 5 nuevas y aumentar en 40.000 el pie de fuerza policial. Plan integral contra el reclutamiento de menores.",cand:2},{text:"Reformar la justicia para reducir garantías a mafias; crear una Gendarmería; reasignar funcionarios de la Procuraduría a la lucha antimafia.",cand:1}]},{problem:"Los grupos armados ilegales se han expandido en los últimos cuatro años, con un crecimiento del 23,5% el último año.",question:"Para enfrentar la expansión de grupos armados, prefiero:",options:[{text:"Abandonar la política prohibicionista de drogas y atacar la criminalidad resolviendo sus causas estructurales.",cand:0},{text:"Priorizar el desmantelamiento de redes de lavado de activos y proteger a líderes sociales y comunidades étnicas.",cand:2},{text:"Militarizar estratégicamente zonas con alta presencia armada, incluyendo la prestación de servicios básicos por militares.",cand:3},{text:"Fortalecer la Fuerza Pública, la inteligencia y la cooperación internacional contra el crimen organizado.",cand:1},{text:"Lanzar un Plan Colombia II con apoyo de EEUU e Israel; eliminar la JEP; lanzar una ofensiva militar total contra el crimen.",cand:4}]},{problem:"La democracia en Colombia enfrenta una nueva oleada de violencia política. The Economist declaró el declive democrático del país por primera vez en cuatro años.",question:"Para revitalizar la democracia, prefiero:",options:[{text:"Mejorar la independencia judicial y reformar los mecanismos de elección de organismos de control (Fiscalía, Procuraduría, Contraloría, magistrados).",cand:2},{text:"Reformar la financiación política para garantizar la integridad de los movimientos políticos.",cand:3},{text:"Crear mesas de diálogo en todos los niveles, reconocer la diversidad del país y permitir ejecución directa de obras por organizaciones comunitarias.",cand:0},{text:"Combatir las mafias con justicia restaurativa para mantener el tejido social mientras se endurece la lucha contra el crimen organizado.",cand:1},{text:"Reducir el aparato estatal en un 40% y eliminar las ideologías extremas del sistema educativo.",cand:4}]},{problem:"Colombia se encuentra en su mayor déficit fiscal de la historia, el segundo más alto del mundo en 2025.",question:"Para resolver la crisis fiscal, prefiero:",options:[{text:"Implementar una Ley de Austeridad Republicana que reduzca los gastos suntuosos del Estado manteniendo el gasto social.",cand:0},{text:"Revisar la eficacia de los programas sociales, acordar un plan de reducción del déficit con organismos internacionales y modernizar la DIAN.",cand:2},{text:"Retomar la regla fiscal y limitar el gasto público al crecimiento económico del país, generando condiciones para la inversión.",cand:1},{text:"Refinanciar la deuda pública con fondos internacionales y retomar de inmediato la Regla Fiscal.",cand:3},{text:"Recortar el gobierno en un 40%, recuperar 25 billones anuales eliminando la corrupción y ampliar la base tributaria.",cand:4}]}];
 
-let current = 0;
-let answers = new Array(TOTAL).fill(null);
-let weights = new Array(TOTAL).fill(3);
+let current=0,answers=new Array(TOTAL).fill(null),weights=new Array(TOTAL).fill(3);
+let s2current=0,s2answers=new Array(s2questions.length).fill(null);
 
-const impLabels = ['Poco importante','Algo importante','Neutral','Importante','Muy importante'];
-
-function toggleCtx(btn) {
-  const ctx = btn.nextElementSibling;
-  const arrow = btn.querySelector('.ctx-arrow');
-  const isOpen = ctx.classList.contains('visible');
-  ctx.classList.toggle('visible', !isOpen);
-  arrow.classList.toggle('open', !isOpen);
-  btn.querySelector('i').nextSibling.textContent = isOpen ? ' ¿Qué significa esto?' : ' Ocultar contexto';
+function toggleCtx(btn){
+  const ctx=btn.nextElementSibling,arrow=btn.querySelector('.ctx-arrow'),isOpen=ctx.classList.contains('visible');
+  ctx.classList.toggle('visible',!isOpen);arrow.classList.toggle('open',!isOpen);
+  btn.lastChild.textContent=isOpen?' ¿Qué significa esto?':' Ocultar contexto';
 }
 
-function renderQ() {
-  const container = document.getElementById('q-container');
-  container.innerHTML = '';
-  const q = questions[current];
-  const card = document.createElement('div');
-  card.className = 'card';
-  const ctxHtml = q.context
-    ? `<button class="ctx-toggle" onclick="toggleCtx(this)" type="button"><i class="ctx-arrow">▶</i> ¿Qué significa esto?</button><div class="context">${q.context}</div>`
-    : '';
-  const impHtml = `
-    <div class="importance-wrap">
-      <div class="importance-label">¿Qué tan importante es este tema para ti?</div>
-      <div class="imp-opts">
-        ${impLabels.map((lbl, i) => `<button class="imp-btn${weights[current] === i+1 ? ' imp-sel' : ''}" onclick="pickWeight(${i+1})">${lbl}</button>`).join('')}
-      </div>
-    </div>`;
-  card.innerHTML = `
-    <div class="qnum">Pregunta ${current + 1} de ${TOTAL}</div>
-    <div class="qtext">${q.text}</div>
-    ${ctxHtml}
-    <div class="opts" id="opts"></div>
-    ${impHtml}
-  `;
-  container.appendChild(card);
-  const row = document.getElementById('opts');
-  labels.forEach((lbl, i) => {
-    const v = i + 1;
-    const btn = document.createElement('button');
-    btn.className = 'opt' + (answers[current] === v ? ' s' + v : '');
-    btn.textContent = lbl;
-    btn.onclick = () => pick(v);
-    row.appendChild(btn);
-  });
+function renderQ(){
+  const q=questions[current],curAns=answers[current];
+  const ctxHtml=q.context?`<button class="ctx-toggle" onclick="toggleCtx(this)" type="button"><i class="ctx-arrow">▶</i> ¿Qué significa esto?</button><div class="context">${q.context}</div>`:'';
+  const optsHtml=labels5.map((lbl,i)=>{const v=i+1;return`<button class="opt${curAns===v?' s'+v:''}" onclick="pick(${v})">${lbl}</button>`;}).join('');
+  const impHtml=`<div class="importance-wrap"><div class="importance-label">¿Qué tan importante es este tema para ti?</div><div class="imp-opts">${impLabels.map((lbl,i)=>`<button class="imp-btn${weights[current]===i+1?' imp-sel':''}" onclick="pickWeight(${i+1})">${lbl}</button>`).join('')}</div></div>`;
+  const card=document.createElement('div');card.className='card';
+  card.innerHTML=`<div class="qnum">Pregunta ${current+1} de ${TOTAL}</div><div class="qtext">${q.text}</div>${ctxHtml}<div class="opts-wrap"><div class="opts-row" id="opts">${optsHtml}</div><button class="opt-ns${curAns==='ns'?' sns':''}" id="opt-ns" onclick="pickNS()">No sé / prefiere no responder</button></div>${impHtml}`;
+  const container=document.getElementById('q-container');container.innerHTML='';container.appendChild(card);
   updateProgress();
-  document.getElementById('btn-prev').disabled = current === 0;
-  document.getElementById('btn-next').textContent = current === TOTAL - 1 ? 'Ver resultados' : 'Siguiente';
-  document.getElementById('warn').style.display = 'none';
+  document.getElementById('btn-prev').disabled=current===0;
+  document.getElementById('btn-next').textContent=current===TOTAL-1?'Ver resultados':'Siguiente';
+  document.getElementById('warn').style.display='none';
 }
 
-function pick(v) {
-  answers[current] = v;
-  document.querySelectorAll('.opt').forEach((b, i) => {
-    b.className = 'opt' + (i + 1 === v ? ' s' + v : '');
+function pick(v){
+  answers[current]=v;
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.className='opt'+(i+1===v?' s'+v:'');});
+  document.getElementById('opt-ns').className='opt-ns';
+  document.getElementById('warn').style.display='none';
+}
+function pickNS(){
+  answers[current]='ns';
+  document.querySelectorAll('.opt').forEach(b=>{b.className='opt';});
+  document.getElementById('opt-ns').className='opt-ns sns';
+  document.getElementById('warn').style.display='none';
+}
+function pickWeight(w){
+  weights[current]=w;
+  document.querySelectorAll('.imp-btn').forEach((b,i)=>{b.className='imp-btn'+(i+1===w?' imp-sel':'');});
+}
+function updateProgress(){
+  const ans=answers.filter(a=>a!==null).length,pct=Math.round(ans/TOTAL*100);
+  document.getElementById('prog-text').textContent=`Pregunta ${current+1} de ${TOTAL}`;
+  document.getElementById('prog-pct').textContent=pct+'% completado';
+  document.getElementById('prog-fill').style.width=pct+'%';
+}
+function nextQ(){
+  if(answers[current]===null){document.getElementById('warn').style.display='block';return;}
+  if(current<TOTAL-1){current++;renderQ();}else showResultsS1();
+}
+function prevQ(){if(current>0){current--;renderQ();}}
+
+function score1(cand){
+  let total=0,max=0;
+  answers.forEach((a,i)=>{
+    if(a===null||a==='ns')return;
+    const w=weights[i]/3;
+    total+=(4-Math.abs(a-cand.pos[i]))*w;max+=4*w;
   });
-  document.getElementById('warn').style.display = 'none';
+  return max>0?(total/max):0;
 }
 
-function pickWeight(w) {
-  weights[current] = w;
-  document.querySelectorAll('.imp-btn').forEach((b, i) => {
-    b.className = 'imp-btn' + (i + 1 === w ? ' imp-sel' : '');
+function userCoords(){
+  let econSum=0,cultSum=0,econW=0,cultW=0;
+  answers.forEach((a,i)=>{
+    if(a===null||a==='ns')return;
+    const w=weights[i]/3,val=(a-3)/2;
+    if(qAxes[i].econ!==0){econSum+=val*qAxes[i].econ*w;econW+=w;}
+    if(qAxes[i].cult!==0){cultSum+=val*qAxes[i].cult*w;cultW+=w;}
   });
+  return{econ:Math.max(-5,Math.min(5,econW>0?econSum/econW*5:0)),cult:Math.max(-5,Math.min(5,cultW>0?cultSum/cultW*5:0))};
 }
 
-function updateProgress() {
-  const answered = answers.filter(a => a !== null).length;
-  const pct = Math.round((answered / TOTAL) * 100);
-  document.getElementById('prog-text').textContent = `Pregunta ${current + 1} de ${TOTAL}`;
-  document.getElementById('prog-pct').textContent = pct + '% completado';
-  document.getElementById('prog-fill').style.width = pct + '%';
+function buildMapHtml(uCoords){
+  const toX=e=>((e+5)/10)*84+8,toY=c=>((5-c)/10)*84+8;
+  const dots=candidates.map(c=>`
+    <div class="chart-dot" style="left:${toX(c.econ)}%;top:${toY(c.cult)}%;background:${c.bg};color:${c.tc};border:2px solid ${c.color};overflow:hidden;padding:0;">${c.photo ? '<img src="data:image/jpeg;base64,'+c.photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">' : c.initials}</div>
+    <div class="chart-lbl" style="left:${toX(c.econ)}%;top:${toY(c.cult)+7}%;color:${c.color}">${c.name.split(' ')[0]}</div>`).join('');
+  return`<p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6;">Su posición (punto negro) y la de cada candidato en el espectro ideológico, calculada a partir de sus respuestas y las posiciones asignadas a cada candidato.</p>
+    <div class="chart-wrap">
+      <div class="chart-grid-h"></div><div class="chart-grid-v"></div>
+      <div class="ax-lbl" style="top:8px;left:50%;transform:translateX(-50%)">↑ Liberal / progresista</div>
+      <div class="ax-lbl" style="bottom:8px;left:50%;transform:translateX(-50%)">↓ Conservador / autoritario</div>
+      <div class="ax-lbl" style="left:6px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center">← Izquierda</div>
+      <div class="ax-lbl" style="right:6px;top:50%;transform:translateY(-50%) rotate(90deg);transform-origin:center">Derecha →</div>
+      ${dots}
+      <div class="chart-dot user-dot" style="left:${toX(uCoords.econ)}%;top:${toY(uCoords.cult)}%">Usted</div>
+    </div>
+    <p style="font-size:11px;color:#aaa;margin-top:8px;line-height:1.6;">Las posiciones de los candidatos son aproximaciones editoriales basadas en sus programas. La tuya se calcula automáticamente de sus respuestas.</p>`;
 }
 
-function nextQ() {
-  if (answers[current] === null) { document.getElementById('warn').style.display = 'block'; return; }
-  if (current < TOTAL - 1) { current++; renderQ(); }
-  else showResults();
-}
-
-function prevQ() {
-  if (current > 0) { current--; renderQ(); }
-}
-
-// ── SECCIÓN 2 ──────────────────────────────────────────────────────────────
-// Cada pregunta tiene 5 opciones, cada una asociada a un candidato (por índice)
-// candIdx: 0=Cepeda, 1=López, 2=Fajardo, 3=Valencia, 4=De la Espriella
-const s2questions = [
-  {
-    problem: "Colombia se encuentra en una profunda crisis de liquidez en la salud, con una deuda de las EPS a los hospitales que asciende a los $25.7 billones y una escasez habitual de medicamentos.",
-    question: "Para salvar la crisis de salud, preferiría:",
-    options: [
-      { text: "Inyectar $10 billones a las EPS para que cumplan sus pagos. Auditoría y liquidación de EPS ineficientes. Promover políticas de prevención como el deporte y la nutrición.", cand: 4 },
-      { text: "Compras estatales transitorias para medicamentos prioritarios; pago de la deuda del Estado a prestadores; incrementar la atención rural.", cand: 3 },
-      { text: "Finalizar la reforma a la salud para que deje de ser un negocio; favorecer brigadas de salud y sistemas de salud comunitaria.", cand: 0 },
-      { text: "Avanzar hacia un Sistema Nacional de Salud mixto, con tablas de precios unificadas pero en el que los prestadores puedan recuperar sus finanzas.", cand: 1 },
-      { text: "Auditorías individualizadas dirigidas a las EPS con problemas de pago para asegurar la liquidez del sistema.", cand: 2 },
-    ]
-  },
-  {
-    problem: "Colombia es percibido por sus ciudadanos como un país altamente corrupto. Las percepciones sobre la corrupción han empeorado desde 2022, según el Índice de Corrupción Internacional.",
-    question: "Para resolver la corrupción en Colombia, prefiero:",
-    options: [
-      { text: "Crear un bloque de búsqueda contra los corruptos bajo órdenes directas del presidente.", cand: 4 },
-      { text: "Implementar un sistema de 'contratación en vitrina': todos los contratos estatales serán trazados por blockchain e IA.", cand: 3 },
-      { text: "Crear una agencia anticorrupción independiente, perseguir a evasores fiscales y reformar los sistemas de lobby político.", cand: 2 },
-      { text: "Crear una Fiscalía Antimafia y un Tribunal especializado contra la corrupción.", cand: 1 },
-      { text: "Crear una Unidad Nacional de Investigación de la Macrocorrupción dentro de la Fiscalía, que persiga redes completas, no individuos aislados.", cand: 0 },
-    ]
-  },
-  {
-    problem: "La tasa de criminalidad en Colombia se ha mantenido estable en los últimos 4 años, sin mejoras significativas en seguridad.",
-    question: "Para resolver la crisis de seguridad, prefiero:",
-    options: [
-      { text: "Crear 7 megacárceles y promover la cadena perpetua.", cand: 4 },
-      { text: "Nivelar salarios de la Policía para retener talento y asegurar diálogo con sectores sociales.", cand: 0 },
-      { text: "Contratar 30.000 nuevos militares y 30.000 nuevos policías; garantizar espacios públicos libres de droga.", cand: 3 },
-      { text: "Reformar las cárceles, construir 5 nuevas y aumentar en 40.000 el pie de fuerza policial. Plan integral contra el reclutamiento de menores.", cand: 2 },
-      { text: "Reformar la justicia para reducir garantías a mafias; crear una Gendarmería; reasignar funcionarios de la Procuraduría a la lucha antimafia.", cand: 1 },
-    ]
-  },
-  {
-    problem: "Los grupos armados ilegales se han expandido en los últimos cuatro años, con un crecimiento del 23,5% el último año.",
-    question: "Para enfrentar la expansión de grupos armados, prefiero:",
-    options: [
-      { text: "Abandonar la política prohibicionista de drogas y atacar la criminalidad resolviendo sus causas estructurales.", cand: 0 },
-      { text: "Priorizar el desmantelamiento de redes de lavado de activos y proteger a líderes sociales y comunidades étnicas.", cand: 2 },
-      { text: "Militarizar estratégicamente zonas con alta presencia armada, incluyendo la prestación de servicios básicos por militares.", cand: 3 },
-      { text: "Fortalecer la Fuerza Pública, la inteligencia y la cooperación internacional contra el crimen organizado.", cand: 1 },
-      { text: "Lanzar un Plan Colombia II con apoyo de EEUU e Israel; eliminar la JEP; lanzar una ofensiva militar total contra el crimen.", cand: 4 },
-    ]
-  },
-  {
-    problem: "La democracia en Colombia enfrenta una nueva oleada de violencia política. The Economist declaró el declive democrático del país por primera vez en cuatro años.",
-    question: "Para revitalizar la democracia, prefiero:",
-    options: [
-      { text: "Mejorar la independencia judicial y reformar los mecanismos de elección de organismos de control (Fiscalía, Procuraduría, Contraloría, magistrados).", cand: 2 },
-      { text: "Reformar la financiación política para garantizar la integridad de los movimientos políticos.", cand: 3 },
-      { text: "Crear mesas de diálogo en todos los niveles, reconocer la diversidad del país y permitir ejecución directa de obras por organizaciones comunitarias.", cand: 0 },
-      { text: "Combatir las mafias con justicia restaurativa para mantener el tejido social mientras se endurece la lucha contra el crimen organizado.", cand: 1 },
-      { text: "Reducir el aparato estatal en un 40% y eliminar las ideologías extremas del sistema educativo.", cand: 4 },
-    ]
-  },
-  {
-    problem: "Colombia se encuentra en su mayor déficit fiscal de la historia, el segundo más alto del mundo en 2025.",
-    question: "Para resolver la crisis fiscal, prefiero:",
-    options: [
-      { text: "Implementar una Ley de Austeridad Republicana que reduzca los gastos suntuosos del Estado manteniendo el gasto social.", cand: 0 },
-      { text: "Revisar la eficacia de los programas sociales, acordar un plan de reducción del déficit con organismos internacionales y modernizar la DIAN.", cand: 2 },
-      { text: "Retomar la regla fiscal y limitar el gasto público al crecimiento económico del país, generando condiciones para la inversión.", cand: 1 },
-      { text: "Refinanciar la deuda pública con fondos internacionales y retomar de inmediato la Regla Fiscal.", cand: 3 },
-      { text: "Recortar el gobierno en un 40%, recuperar 25 billones anuales eliminando la corrupción y ampliar la base tributaria.", cand: 4 },
-    ]
-  }
-];
-
-let s2current = 0;
-let s2answers = new Array(s2questions.length).fill(null); // índice del candidato elegido
-
-// ── PUNTUACIÓN ──────────────────────────────────────────────────────────────
-function score1(cand) {
-  let total = 0, max = 0;
-  answers.forEach((a, i) => {
-    if (a !== null) {
-      const w = weights[i] / 3;
-      total += (4 - Math.abs(a - cand.pos[i])) * w;
-      max += 4 * w;
-    }
+function buildCompareHtml(ranked){
+  const ansLabels={1:"Muy en contra",2:"Algo en contra",3:"Neutral",4:"Algo a favor",5:"Muy a favor",ns:"No sé"};
+  const barW={1:10,2:30,3:50,4:70,5:90,ns:50};
+  let html=`<p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6;">Tu respuesta (negro) comparada con la posición de cada candidato en cada tema. ✓ = acuerdo total, ≈ = acuerdo parcial.</p>`;
+  questions.forEach((q,i)=>{
+    const userAns=answers[i];if(userAns===null)return;
+    html+=`<div class="compare-q"><div class="compare-qtitle">${i+1}. ${q.text}</div>`;
+    const uW=barW[userAns]||50;
+    html+=`<div class="compare-row"><div class="compare-who" style="color:#111">Usted</div><div class="compare-bar-bg"><div class="compare-bar-fill" style="width:${uW}%;background:#1a1a1a"></div></div><div class="compare-val" style="color:#111;font-weight:700">${ansLabels[userAns]||'No sé'}</div></div>`;
+    ranked.forEach(c=>{
+      const cPos=c.pos[i],cW=barW[cPos]||50;
+      const diff=userAns==='ns'?null:Math.abs(userAns-cPos);
+      const icon=diff===0?'✓':diff===1?'≈':'';
+      html+=`<div class="compare-row"><div class="compare-who" style="color:${c.color}">${c.initials}</div><div class="compare-bar-bg"><div class="compare-bar-fill" style="width:${cW}%;background:${c.color}"></div></div><div class="compare-val" style="color:${c.color}">${ansLabels[cPos]} ${icon}</div></div>`;
+    });
+    html+=`</div>`;
   });
-  return max > 0 ? (total / max) : 0;
-}
-
-function buildResultsHtml(title, subtitle, scoresFn, showS2btn) {
-  const ranked = candidates.map((c, ci) => ({ ...c, ci, pct: Math.round(scoresFn(c, ci) * 100) })).sort((a, b) => b.pct - a.pct);
-  let html = `<h1 style="font-size:22px;font-weight:600;margin-bottom:6px;">${title}</h1>
-    <p class="subtitle">${subtitle}</p>`;
-  ranked.forEach((c, idx) => {
-    html += `
-      <div class="cand-card ${idx === 0 ? 'top' : ''}">
-        <div class="avatar" style="background:${c.bg};color:${c.tc}">${c.initials}</div>
-        <div style="flex:1">
-          ${idx === 0 ? '<span class="badge">Mayor afinidad</span>' : ''}
-          <div class="cname">${c.name}</div>
-          <div class="cparty">${c.party}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${c.pct}%;background:${c.color}"></div></div>
-          <div class="pct">${c.pct}% de afinidad</div>
-        </div>
-      </div>`;
-  });
-  if (showS2btn) {
-    html += `
-      <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f8f7f3;border-radius:10px;border-left:2px solid #378ADD;">
-        <div style="font-size:14px;font-weight:600;color:#111;margin-bottom:4px;">¿Quieres afinar tu resultado?</div>
-        <div style="font-size:13px;color:#555;margin-bottom:12px;line-height:1.6;">La sección 2 te presenta propuestas concretas de cada candidato ante 6 problemas del país. Elige la que más te convenza — es opcional y tarda menos de 2 minutos.</div>
-        <button class="btn primary" onclick="startS2()">Continuar a la sección 2 →</button>
-      </div>`;
-  }
-  html += `<div class="disclaimer" style="margin-top:1rem;">Este quiz es una herramienta orientativa basada en los programas de gobierno y posiciones públicas de cada candidato. Las afinidades son aproximaciones y no reemplazan la lectura directa de sus propuestas.</div>
-    <div style="margin-top:1rem"><button class="btn" onclick="restartQuiz()">Volver a empezar</button></div>`;
   return html;
 }
 
-function showResults() {
-  document.getElementById('quiz-section').style.display = 'none';
-  const rs = document.getElementById('results-section');
-  rs.style.display = 'block';
-  rs.innerHTML = buildResultsHtml(
-    'Tus resultados — Sección 1',
-    'Basado en tus posiciones sobre los grandes temas del debate político colombiano.',
-    (c) => score1(c),
-    true
-  );
+function buildResultsHtml(ranked,showS2){
+  return ranked.map((c,idx)=>`
+    <div class="cand-card ${idx===0?'top':''}">
+      <div class="avatar" style="background:${c.bg};color:${c.tc};overflow:hidden;padding:0;">${c.photo ? '<img src="data:image/jpeg;base64,'+c.photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">' : c.initials}</div>
+      <div style="flex:1">
+        ${idx===0?'<span class="badge">Mayor afinidad</span>':''}
+        <div class="cname">${c.name}</div>
+        <div class="cparty">${c.party}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${c.pct}%;background:${c.color}"></div></div>
+        <div class="pct">${c.pct}% de afinidad</div>
+      </div>
+    </div>`).join('')
+  +(showS2?`<div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f8f7f3;border-radius:10px;border-left:2px solid #378ADD;">
+    <div style="font-size:14px;font-weight:600;color:#111;margin-bottom:4px;">¿Quieres afinar tu resultado?</div>
+    <div style="font-size:13px;color:#555;margin-bottom:12px;line-height:1.6;">La sección 2 te presenta propuestas concretas ante 6 problemas del país. Elige la que más te convenza — es opcional y tarda menos de 2 minutos.</div>
+    <button class="btn primary" onclick="startS2()">Continuar a la sección 2 →</button>
+  </div>`:'');
 }
 
-// ── SECCIÓN 2 ──────────────────────────────────────────────────────────────
-function startS2() {
-  s2current = 0;
-  s2answers = new Array(s2questions.length).fill(null);
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('s2-section').style.display = 'block';
+function renderResults(scoresFn,title,subtitle,showS2){
+  const ranked=candidates.map((c,ci)=>({...c,ci,pct:Math.round((scoresFn?scoresFn(c,ci):score1(c))*100)})).sort((a,b)=>b.pct-a.pct);
+  const uCoords=userCoords();
+  document.getElementById('quiz-section').style.display='none';
+  document.getElementById('s2-section').style.display='none';
+  const rs=document.getElementById('results-section');rs.style.display='block';
+  const s2tab = showS2 ? '' : '<button class="tab" onclick="switchTab(\'propuestas\',this)">Propuestas S2</button>';
+  const s2panel = showS2 ? '' : '<div class="tab-panel" id="tab-propuestas">' + buildS2RevealHtml() + '</div>';
+  rs.innerHTML=`
+    <h1 style="margin-bottom:6px;">${title}</h1>
+    <p class="subtitle">${subtitle}</p>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('afinidad',this)">Afinidad</button>
+      <button class="tab" onclick="switchTab('mapa',this)">Mapa ideológico</button>
+      <button class="tab" onclick="switchTab('comparar',this)">Comparar respuestas</button>
+      ${s2tab}
+    </div>
+    <div class="tab-panel active" id="tab-afinidad">${buildResultsHtml(ranked,showS2)}</div>
+    <div class="tab-panel" id="tab-mapa">${buildMapHtml(uCoords)}</div>
+    <div class="tab-panel" id="tab-comparar">${buildCompareHtml(ranked)}</div>
+    ${s2panel}
+    <div class="disclaimer">Este quiz es una herramienta orientativa basada en los programas de gobierno y posiciones públicas de cada candidato. Las afinidades son aproximaciones y no reemplazan la lectura directa de sus propuestas.</div>
+    <div style="margin-top:1rem"><button class="btn" onclick="restartQuiz()">Volver a empezar</button></div>`;
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function showResultsS1(){
+  renderResults(null,'Tus resultados — Sección 1','Basado en sus posiciones sobre los grandes temas del debate político colombiano.',true);
+}
+
+function startS2(){
+  s2current=0;s2answers=new Array(s2questions.length).fill(null);
+  document.getElementById('results-section').style.display='none';
+  document.getElementById('s2-section').style.display='block';
   renderS2();
 }
 
-function renderS2() {
-  const q = s2questions[s2current];
-  const STOTAL = s2questions.length;
-  const pct = Math.round((s2current / STOTAL) * 100);
-
-  // shuffle options for display but keep cand reference
-  const opts = q.options.map((o, i) => ({ ...o, origIdx: i }));
-
-  let optHtml = opts.map((o, i) => `
-    <button class="s2-opt ${s2answers[s2current] === o.cand ? 's2-sel' : ''}"
-      onclick="pickS2(${o.cand}, this)">
-      ${o.text}
-    </button>`).join('');
-
-  document.getElementById('s2-section').innerHTML = `
-    <h1 style="font-size:22px;font-weight:600;margin-bottom:6px;">Sección 2 — Propuestas concretas</h1>
+function renderS2(){
+  const q=s2questions[s2current],STOTAL=s2questions.length,pct=Math.round(s2current/STOTAL*100),curAns=s2answers[s2current];
+  const optHtml=q.options.map(o=>`<button class="s2-opt${curAns===o.cand?' s2-sel':''}" onclick="pickS2(${o.cand},this)">${o.text}</button>`).join('');
+  document.getElementById('s2-section').innerHTML=`
+    <h1 style="margin-bottom:6px;">Sección 2 — Propuestas concretas</h1>
     <p class="subtitle">Elige la propuesta que más te convenza. No se indica a qué candidato pertenece cada una.</p>
-    <div class="progress-label" style="margin-top:1rem;">
-      <span>Problema ${s2current + 1} de ${STOTAL}</span>
-      <span>${pct}% completado</span>
-    </div>
+    <div class="progress-label" style="margin-top:1rem;"><span>Problema ${s2current+1} de ${STOTAL}</span><span>${pct}% completado</span></div>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
     <div class="card" style="margin-top:1rem;">
-      <div class="qnum">Problema ${s2current + 1} de ${STOTAL}</div>
-      <div style="font-size:13px;color:#555;line-height:1.65;margin-bottom:10px;padding:10px 12px;background:#f8f7f3;border-radius:8px;border-left:2px solid #ccc;">${q.problem}</div>
+      <div class="qnum">Problema ${s2current+1} de ${STOTAL}</div>
+      <div style="font-size:13px;font-weight:600;color:#333;line-height:1.65;margin-bottom:12px;padding:10px 13px;background:#f8f7f3;border-radius:8px;border-left:3px solid #aaa;">${q.problem}</div>
       <div class="qtext" style="margin-bottom:1rem;">${q.question}</div>
-      <div class="s2-opts">${optHtml}</div>
+      <div class="s2-opts">${optHtml}<button class="s2-opt s2-ns${curAns==='ns'?' s2-sel':''}" onclick="pickS2('ns',this)">No sé / ninguna me convence del todo</button></div>
     </div>
     <div class="warn" id="s2-warn" style="display:none">Por favor elige una opción antes de continuar.</div>
     <div class="nav">
-      <button class="btn" onclick="prevS2()" ${s2current === 0 ? 'disabled' : ''}>Anterior</button>
-      <button class="btn primary" onclick="nextS2()">${s2current === STOTAL - 1 ? 'Ver resultados finales' : 'Siguiente'}</button>
+      <button class="btn" onclick="prevS2()" ${s2current===0?'disabled':''}>Anterior</button>
+      <button class="btn primary" onclick="nextS2()">${s2current===STOTAL-1?'Ver resultados finales':'Siguiente'}</button>
     </div>`;
 }
 
-function pickS2(candIdx, btn) {
-  s2answers[s2current] = candIdx;
-  document.querySelectorAll('.s2-opt').forEach(b => b.classList.remove('s2-sel'));
+function pickS2(val,btn){
+  s2answers[s2current]=val;
+  document.querySelectorAll('.s2-opt').forEach(b=>b.classList.remove('s2-sel'));
   btn.classList.add('s2-sel');
-  document.getElementById('s2-warn').style.display = 'none';
+  document.getElementById('s2-warn').style.display='none';
+}
+function nextS2(){
+  if(s2answers[s2current]===null){document.getElementById('s2-warn').style.display='block';return;}
+  if(s2current<s2questions.length-1){s2current++;renderS2();}else showFinalResults();
+}
+function prevS2(){if(s2current>0){s2current--;renderS2();}}
+
+function buildS2RevealHtml(){
+  if(!s2answers||s2answers.every(a=>a===null))return'';
+  const cnames=candidates.map(c=>c.name);
+  const ccolors=candidates.map(c=>c.color);
+  const cbgs=candidates.map(c=>c.bg);
+  const ctcs=candidates.map(c=>c.tc);
+  let html=`<div style="margin-top:1.5rem;"><h2 style="font-size:15px;font-weight:700;color:#111;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid #e8e6e0;">¿De quién era cada propuesta?</h2>`;
+  s2questions.forEach((q,qi)=>{
+    const chosen=s2answers[qi];
+    html+=`<div class="compare-q" style="margin-bottom:10px;">
+      <div class="compare-qtitle" style="margin-bottom:8px;">${qi+1}. ${q.question}</div>`;
+    q.options.forEach(o=>{
+      const isChosen=(chosen===o.cand);
+      const c=candidates[o.cand];
+      html+=`<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 9px;border-radius:7px;margin-bottom:5px;background:${isChosen?c.bg:'#fafafa'};border:1px solid ${isChosen?c.color:'#eeebe5'};">
+        <div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0;margin-top:4px;"></div>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:${c.color};margin-bottom:2px;">${c.name}${isChosen?' <span style="background:'+c.color+';color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;margin-left:4px;">Usted eligió esta</span>':''}</div>
+          <div style="font-size:12px;color:#444;line-height:1.5;">${o.text}</div>
+        </div>
+      </div>`;
+    });
+    if(chosen==='ns'){
+      html+=`<div style="padding:7px 9px;border-radius:7px;background:#f5f4f0;border:1px dashed #ccc;font-size:12px;color:#888;font-style:italic;">Usted respondió: No sé / ninguna me convence del todo</div>`;
+    }
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  return html;
 }
 
-function nextS2() {
-  if (s2answers[s2current] === null) { document.getElementById('s2-warn').style.display = 'block'; return; }
-  if (s2current < s2questions.length - 1) { s2current++; renderS2(); }
-  else showFinalResults();
+function showFinalResults(){
+  const s2bonus=new Array(candidates.length).fill(0);let s2count=0;
+  s2answers.forEach(a=>{if(a!==null&&a!=='ns'){s2bonus[a]+=4;s2count++;}});
+  const s2max=s2count*4;
+  renderResults((c,ci)=>{
+    const s1=score1(c),s2=s2max>0?s2bonus[ci]/s2max:s1;return(s1*2+s2)/3;
+  },'Tus resultados finales','Combinación de sus posiciones ideológicas (sección 1) y las propuestas concretas que eligió (sección 2).',false);
 }
 
-function prevS2() {
-  if (s2current > 0) { s2current--; renderS2(); }
-}
-
-function showFinalResults() {
-  document.getElementById('s2-section').style.display = 'none';
-  const rs = document.getElementById('results-section');
-  rs.style.display = 'block';
-
-  // s2 bonus: cada elección suma 4 puntos al candidato elegido (equivale a acuerdo perfecto en s1)
-  const s2bonus = new Array(candidates.length).fill(0);
-  s2answers.forEach(ci => { if (ci !== null) s2bonus[ci] += 4; });
-  const s2max = s2answers.filter(a => a !== null).length * 4;
-
-  rs.innerHTML = buildResultsHtml(
-    'Tus resultados finales',
-    'Combinación de tus posiciones ideológicas (sección 1) y las propuestas concretas que elegiste (sección 2).',
-    (c, ci) => {
-      const s1raw = score1(c);
-      // Normalizar s2 a escala 0-1
-      const s2raw = s2max > 0 ? s2bonus[ci] / s2max : 0;
-      // Promedio ponderado: s1 vale 2/3, s2 vale 1/3
-      return (s1raw * 2 + s2raw) / 3;
-    },
-    false
-  );
-}
-
-function restartQuiz() {
-  current = 0;
-  answers = new Array(TOTAL).fill(null);
-  weights = new Array(TOTAL).fill(3);
-  s2current = 0;
-  s2answers = new Array(s2questions.length).fill(null);
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('s2-section').style.display = 'none';
-  document.getElementById('quiz-section').style.display = 'block';
+function restartQuiz(){
+  current=0;answers=new Array(TOTAL).fill(null);weights=new Array(TOTAL).fill(3);
+  s2current=0;s2answers=new Array(s2questions.length).fill(null);
+  document.getElementById('results-section').style.display='none';
+  document.getElementById('s2-section').style.display='none';
+  document.getElementById('quiz-section').style.display='block';
   renderQ();
 }
 
