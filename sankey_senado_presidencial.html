@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Sankey: Senado a Presidencial 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#23201c;--muted:#6f685e;--line:#e4e4e4;--card:#f7f7f5}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:'DM Mono',monospace;font-size:13px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding:22px 14px 60px}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(19px,4.5vw,26px);font-weight:400;margin:0 0 4px}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(15px,3.8vw,19px);font-weight:400;margin:22px 0 7px}
+.byline{font-size:10px;color:var(--muted);margin:0 0 14px;line-height:1.5}
+#sankey{width:100%;height:72vh;min-height:540px}
+.finding{background:var(--card);border-left:3px solid var(--ink);padding:11px 14px;margin:14px 0;border-radius:0 3px 3px 0;font-size:12px}
+.finding b{font-family:'DM Serif Display',serif;font-weight:400;font-size:14px;display:block;margin-bottom:3px}
+.key{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;font-size:11px}
+.key span{display:flex;align-items:center;gap:6px}
+.sw{width:26px;height:12px;border-radius:2px;display:inline-block}
+p{font-size:12px;margin:0 0 10px}
+.note{font-size:10px;color:var(--muted);line-height:1.55}
+@media(max-width:600px){#sankey{height:82vh}}
+</style></head><body><div class="wrap">
+<h1>Del Senado a la primera vuelta</h1>
+<p class="byline">Transferencia de las 11 listas al Senado de marzo hacia los candidatos presidenciales de mayo &middot; NNLS regional ponderado &middot; 9.183 puestos &middot; votos en miles</p>
+<div id="sankey"></div>
+<div class="key">
+<span><span class="sw" style="background:rgba(120,120,120,0.5)"></span> flujo robusto</span>
+<span><span class="sw" style="background:rgba(120,120,120,0.2)"></span> flujo secundario / estimado</span>
+<span><span class="sw" style="background:rgba(207,202,191,0.5)"></span> no rastreable</span>
+</div>
+<div class="finding"><b>Dos partidos anclan el mapa; el resto se reparte</b>
+El <b>Pacto Hist&oacute;rico</b> (3.7M, la lista m&aacute;s votada) entreg&oacute; el 88% de su voto a <b>Cepeda</b> &mdash; el flujo m&aacute;s limpio del pa&iacute;s. El <b>Centro Democr&aacute;tico</b> (2.26M) fue 78% a <b>de la Espriella</b> + 15% a Valencia. Entre ambos suman casi 6M de votos con destino ideol&oacute;gico claro. Las maquinarias tradicionales (Liberal, Conservador, La U, Cambio Radical) se <b>dividieron</b> entre Cepeda y de la Espriella seg&uacute;n el territorio &mdash; ninguna tiene un destino propio. <b>Creemos</b> (el partido de Fico) fue 72% a de la Espriella + 22% a Fajardo.</div>
+<h2>&iquest;C&oacute;mo se lee?</h2>
+<p>A la izquierda, las 11 listas al Senado (altura proporcional a sus votos); a la derecha, los cinco candidatos presidenciales. El grosor de cada cinta es el voto estimado transferido. La opacidad codifica confianza: s&oacute;lido = flujo dominante robusto, tenue = flujo secundario o estimado. Toca una cinta para la cifra.</p>
+<p class="note"><b>M&eacute;todo:</b> regresi&oacute;n ecol&oacute;gica NNLS estimada por regi&oacute;n y promediada por d&oacute;nde vive el voto de cada lista (anti-Simpson), porque las maquinarias transfieren en direcciones opuestas seg&uacute;n el territorio. Magnitudes acotadas a los totales presidenciales reales (el Senado explica 97% del voto de Cepeda, 83% de de la Espriella). Salvaci&oacute;n Nacional y Frente Amplio se estimaron con controles de colinealidad (sus se&ntilde;ales eran absorbidas por CD y Pacto respectivamente): Salv.N &rarr; de la Espriella 55%, F.Amplio &rarr; Cepeda 80%. Ahora&rarr;Fajardo se verific&oacute; y result&oacute; peque&ntilde;o (5%): su componente urbano va m&aacute;s a Cepeda/Valencia. Totales del Senado aproximados. Inferencia ecol&oacute;gica sobre covariaci&oacute;n geogr&aacute;fica, no seguimiento de votantes individuales.</p>
+<script>
+Plotly.newPlot('sankey',[{type:'sankey',orientation:'h',
+ node:{label:["Pacto Histórico (3720k)", "Centro Democrático (2260k)", "Liberal (1670k)", "Conservador (1200k)", "Alianza (1150k)", "La U (1040k)", "Cambio Radical (800k)", "Ahora Colombia (560k)", "Salvación N. (520k)", "Frente Amplio (480k)", "Creemos (410k)", "Cepeda", "de la Espriella", "Valencia", "Fajardo", "Claudia López", "No rastreable"],color:["#BB00DF", "#3949AB", "#E53935", "#1E88E5", "#43A047", "#FB8C00", "#8E24AA", "#00ACC1", "#6D4C41", "#EC407A", "#FDD835", "#BB00DF", "#DAA06D", "#1565C0", "#8A9A5B", "#B71C1C", "#cfcabf"],pad:11,thickness:15,line:{color:'#fff',width:1}},
+ link:{source:[0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 10, 10, 10],target:[11, 13, 14, 15, 16, 12, 13, 14, 16, 11, 12, 13, 16, 11, 12, 13, 16, 11, 12, 13, 14, 16, 11, 12, 13, 16, 11, 12, 13, 16, 11, 12, 13, 14, 16, 12, 13, 14, 16, 11, 16, 12, 13, 14],value:[3274, 37, 74, 37, 298, 1760, 336, 55, 102, 719, 624, 107, 207, 330, 567, 96, 200, 373, 309, 58, 46, 356, 423, 412, 58, 143, 252, 436, 16, 85, 157, 120, 50, 28, 203, 286, 26, 62, 140, 384, 77, 295, 22, 89],color:["rgba(187,0,223,0.5)", "rgba(21,101,192,0.2)", "rgba(138,154,91,0.2)", "rgba(183,28,28,0.2)", "rgba(207,202,191,0.2)", "rgba(218,160,109,0.5)", "rgba(21,101,192,0.5)", "rgba(138,154,91,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.5)", "rgba(218,160,109,0.2)", "rgba(21,101,192,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.2)", "rgba(218,160,109,0.5)", "rgba(21,101,192,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.2)", "rgba(218,160,109,0.2)", "rgba(21,101,192,0.2)", "rgba(138,154,91,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.5)", "rgba(218,160,109,0.2)", "rgba(21,101,192,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.2)", "rgba(218,160,109,0.5)", "rgba(21,101,192,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.2)", "rgba(218,160,109,0.2)", "rgba(21,101,192,0.2)", "rgba(138,154,91,0.2)", "rgba(207,202,191,0.2)", "rgba(218,160,109,0.5)", "rgba(21,101,192,0.2)", "rgba(138,154,91,0.2)", "rgba(207,202,191,0.2)", "rgba(187,0,223,0.5)", "rgba(207,202,191,0.2)", "rgba(218,160,109,0.5)", "rgba(21,101,192,0.2)", "rgba(138,154,91,0.2)"]}}],
+ {font:{family:'DM Mono, monospace',size:10,color:'#23201c'},paper_bgcolor:'#fff',
+  margin:{l:6,r:6,t:8,b:8}},{displayModeBar:false,responsive:true});
+</script></div></body></html>
