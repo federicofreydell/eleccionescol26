@@ -703,6 +703,7 @@ header .sub{color:var(--text2);font-size:12px;font-weight:300}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
 .seg button:focus-visible,.prow:focus-visible,#search:focus-visible,.lnk:focus-visible{outline:2px solid #294075;outline-offset:1px}
 .hint{color:var(--text2);font-size:11px;margin-top:6px;font-weight:300}
+.pick{width:100%;margin-top:8px;padding:6px 8px;border:1px solid var(--border);border-radius:3px;background:var(--surf2);font-size:12px;font-family:var(--mono);color:var(--text)}
 .big{font-family:var(--serif);font-weight:500;letter-spacing:-.5px;font-size:34px;line-height:1;margin:2px 0 4px}
 .kv{display:flex;gap:14px;flex-wrap:wrap;color:var(--text2);font-size:11.5px}
 .kv b{color:var(--text);font-weight:500}
@@ -793,6 +794,7 @@ details.note p{margin:.6em 0}
         <button data-v="win">Ganador</button><button data-v="party">Un partido</button><button data-v="part">Participación</button>
       </div>
       <div id="subopts" style="margin-top:10px"></div>
+      <div id="ovOpt"></div>
       <div id="bgOpt"></div>
       <p class="lab" style="margin-top:12px">Unidad</p>
       <div class="seg" id="levelSeg"><button data-l="muni">Municipios</button><button data-l="pu">Puestos</button></div>
@@ -899,7 +901,7 @@ function elsFor(y, corp) {
   return out;
 }
 var C0 = CORPS[0], Y0 = yearsFor(C0), YL = Y0[Y0.length - 1];
-var S = { corp: C0, year: YL, eid: elsFor(YL, C0)[0].id, view: 'win', level: 'muni', shade: 'share', scale: 'rel',
+var S = { pref: null, ovr: true, corp: C0, year: YL, eid: elsFor(YL, C0)[0].id, view: 'win', level: 'muni', shade: 'share', scale: 'rel',
           pmode: 'nivel', bg: 'coro', party: null, sel: null, showAll: false, panel: true };
 var YEARS = Y0;
 var HASH_PARTY = null;
@@ -1029,7 +1031,7 @@ function computeDomains(el) {
     for (i in el.puD) { r = puRec(el, +i); if (!r || r[0] < 40) continue; if (S.party !== null) { var s2 = recShare(r, S.party); if (s2 > 0) sh.push(s2); } var p2 = recPart(r); if (isFinite(p2)) pa.push(p2); }
   }
   DOM.party = Math.max(0.05, quantile(sh, 0.95));
-  var refo = S.view === 'part' && S.pmode !== 'nivel' ? refElec(S.pmode === 'd2v' ? '2v' : 'prev') : null;
+  var refo = S.view === 'part' && S.pmode !== 'nivel' ? refElec(S.pmode === 'd2v' ? '2v' : (S.pmode === 'dciclo' ? 'ciclo' : 'prev')) : null;
   var ref = refo ? refo.el : null;
   var ds = [], id2;
   for (id2 in el.muni) {
@@ -1110,6 +1112,38 @@ L.geoJSON(natMesh, { renderer: svgR, interactive: false, smoothFactor: 0.4, styl
 var selOutline = L.geoJSON(null, { renderer: svgR, interactive: false, style: { color: '#1a1814', weight: 2.2, fill: false } }).addTo(map);
 var selRing = L.circleMarker([0, 0], { renderer: svgR, interactive: false, radius: 9, weight: 2.5, color: '#1a1814', fill: false, opacity: 0 }).addTo(map);
 
+var OV = { resg: null, cc: null };
+function overlay(kind) {
+  if (OV[kind]) return OV[kind];
+  if (!DATA.overlays || !DATA.overlays[kind]) return null;
+  var tj = DATA.overlays[kind], obj = kind === 'resg' ? 'resg' : 'cc';
+  var col = kind === 'resg' ? '#8b0000' : '#1b7837';
+  OV[kind] = L.geoJSON(topojson.feature(tj, tj.objects[obj]), {
+    renderer: svgR, smoothFactor: 0.6,
+    style: { color: col, weight: 0.8, opacity: 0.85, fillColor: col, fillOpacity: 0.12 },
+    onEachFeature: function (f, layer) {
+      var nm = f.properties && (f.properties.nm || '');
+      var extra = f.properties && f.properties.pu ? ' · pueblo ' + f.properties.pu : '';
+      layer.on('mouseover', function () { info.innerHTML = '<div class="t">' + esc(nm) + '</div><div class="s">' + esc(kind === 'resg' ? 'Resguardo indígena' + extra : 'Consejo comunitario titulado') + '</div>'; info.style.display = 'block'; });
+      layer.on('mouseout', function () { hideInfo(); });
+    }
+  });
+  return OV[kind];
+}
+function syncOverlays() {
+  var el = elec(), want = { resg: false, cc: false };
+  if (S.ovr) {
+    if (el.id === 'SENI' || el.id === 'CAMI' || el.id === 'CAMC') want.resg = true;
+    if (el.id === 'CAMA' || el.id === 'CAMC') want.cc = true;
+  }
+  var k;
+  for (k in want) {
+    var ly = overlay(k);
+    if (!ly) continue;
+    if (want[k] && !map.hasLayer(ly)) ly.addTo(map);
+    if (!want[k] && map.hasLayer(ly)) map.removeLayer(ly);
+  }
+}
 var puLayer = L.layerGroup();
 var PMK = [];
 function ensurePuMarkers() {
@@ -1177,6 +1211,7 @@ function styleAll() {
     if (!map.hasLayer(puLayer)) puLayer.addTo(map);
   }
   map.getPane('puestos').style.pointerEvents = S.level === 'pu' ? 'auto' : 'none';
+  syncOverlays();
   legend();
 }
 
@@ -1202,7 +1237,8 @@ function legend() {
     h += '<div class="ramp" style="background:linear-gradient(90deg,' + partyRamp(c, 0) + ',' + c + ',' + partyRamp(c, 1) + ')"></div>';
     h += '<div class="ticks"><span>0%</span><span>' + pct(mx / 2, 0) + '</span><span>' + (S.scale === 'abs' ? '100%' : '≥' + pct(mx, 0)) + '</span></div>';
   } else if (S.view === 'part' && S.pmode !== 'nivel') {
-    h += '<div class="lt">Cambio en participación, ' + (S.pmode === 'd2v' ? 'vs 1ª vuelta' : 'vs elección anterior') + '</div>';
+    var rl = S.pmode === 'd2v' ? 'vs 1ª vuelta' : (S.pmode === 'dciclo' ? 'vs ' + ((cycleFind(S.pref) || {}).label || 'otra elección') : 'vs elección anterior');
+    h += '<div class="lt">Cambio en participación, ' + esc(rl) + '</div>';
     h += '<div class="ramp" style="background:linear-gradient(90deg,#8a3324,#f3efe9,#1b6b5a)"></div>';
     h += '<div class="ticks"><span>−' + pct(DOM.dpart, 0) + '</span><span>0</span><span>+' + pct(DOM.dpart, 0) + '</span></div>';
   } else {
@@ -1248,6 +1284,12 @@ function renderControls() {
     lb[j].disabled = (l === 'pu' && !has);
     (function (l) { lb[j].onclick = function () { S.level = l; S.sel = null; refresh(); }; })(l);
   }
+  var ovWrap = document.getElementById('ovOpt'), elx = elec();
+  var canOv = DATA.overlays && (elx.id === 'SENI' || elx.id === 'CAMI' || elx.id === 'CAMA' || elx.id === 'CAMC');
+  if (canOv) {
+    ovWrap.innerHTML = '<p class="lab" style="margin-top:12px">Territorios colectivos</p><div class="seg" id="ovSeg"></div>';
+    segButtons(document.getElementById('ovSeg'), [{ label: 'Mostrar', value: 1 }, { label: 'Ocultar', value: 0 }], S.ovr ? 1 : 0, function (v) { S.ovr = !!v; syncOverlays(); renderControls(); });
+  } else { ovWrap.innerHTML = ''; }
   var bgWrap = document.getElementById('bgOpt');
   if (S.level === 'pu') {
     bgWrap.innerHTML = '<p class="lab">Fondo municipal</p><div class="seg" id="bgSeg"></div>';
@@ -1262,17 +1304,46 @@ function renderControls() {
     var opts = [{ label: 'Nivel', value: 'nivel' }];
     if (refElec('2v')) opts.push({ label: 'Cambio vs 1ª vuelta', value: 'd2v' });
     if (refElec('prev')) opts.push({ label: 'Cambio vs elección anterior', value: 'dprev' });
+    if (cycleOptions().length) opts.push({ label: 'Cambio vs otra elección del ciclo', value: 'dciclo' });
     if (opts.length > 1) {
-      so.innerHTML = '<p class="lab">Participación</p><div class="seg" id="pmSeg"></div>';
-      if (S.pmode !== 'nivel' && !refElec(S.pmode === 'd2v' ? '2v' : 'prev')) S.pmode = 'nivel';
+      var co = cycleOptions();
+      if (S.pmode === 'dciclo' && co.length && (!S.pref || !cycleFind(S.pref))) S.pref = co[0].key;
+      if (S.pmode !== 'nivel' && !refElec(S.pmode === 'd2v' ? '2v' : (S.pmode === 'dciclo' ? 'ciclo' : 'prev'))) S.pmode = 'nivel';
+      var selHtml = '';
+      if (S.pmode === 'dciclo') {
+        selHtml = '<select id="cycSel" class="pick">';
+        for (var ci = 0; ci < co.length; ci++) selHtml += '<option value="' + esc(co[ci].key) + '"' + (co[ci].key === S.pref ? ' selected' : '') + '>' + esc(co[ci].label) + '</option>';
+        selHtml += '</select>';
+      }
+      so.innerHTML = '<p class="lab">Participación</p><div class="seg" id="pmSeg"></div>' + selHtml;
       segButtons(document.getElementById('pmSeg'), opts, S.pmode, function (v) { S.pmode = v; refresh(); });
+      var cs = document.getElementById('cycSel');
+      if (cs) cs.onchange = function () { S.pref = this.value; refresh(); };
     } else { so.innerHTML = ''; S.pmode = 'nivel'; }
   } else if (S.view === 'party') {
     so.innerHTML = '<p class="lab">Escala · ' + esc(nameOf(el, S.party)) + '</p><div class="seg" id="scaleSeg"></div><div class="hint">Elige otro partido en la lista de resultados nacionales.</div>';
     segButtons(document.getElementById('scaleSeg'), [{ label: 'Relativa al máximo', value: 'rel' }, { label: '0 a 100%', value: 'abs' }], S.scale, function (v) { S.scale = v; refresh(); });
   } else so.innerHTML = '';
 }
+function cycleOptions() {
+  var cur = elec(), out = [], es = DATA.years[S.year].elections, i, e;
+  for (i = 0; i < es.length; i++) {
+    e = es[i];
+    if (e === cur || e.special || e.noPart) continue;
+    out.push({ key: e.corp + '|' + e.id, label: (CORPLAB[e.corp] || e.corp) + ' · ' + e.label });
+  }
+  return out;
+}
+function cycleFind(key) {
+  var es = DATA.years[S.year].elections, i;
+  for (i = 0; i < es.length; i++) if (es[i].corp + '|' + es[i].id === key) return es[i];
+  return null;
+}
 function refElec(kind) {
+  if (kind === 'ciclo') {
+    var e = cycleFind(S.pref);
+    return e ? { el: prep(e), year: S.year } : null;
+  }
   var el = elec(), i, es, ys, y;
   if (kind === '2v') {
     if (el.id !== 'PRE2') return null;
@@ -1322,6 +1393,26 @@ function stackBar(el, acc) {
   if (acc.b) { var wb = acc.b / acc.v * 100; h += seg('#cfc8bd', wb, pct(wb / 100, 0)); }
   return '<div class="stack">' + h + '</div>';
 }
+function circChart(year, corp) {
+  if (corp !== 'SENADO' && corp !== 'CAMARA') return '';
+  var es = elsFor(year, corp), i, rows = [], cen = 0, maxv = 0;
+  for (i = 0; i < es.length; i++) {
+    var e2 = prep(es[i]), a2 = e2.natAgg;
+    if (!a2 || !a2.v) continue;
+    if (!e2.special && a2.c > cen) cen = a2.c;
+    rows.push({ label: e2.label, v: a2.v, sp: e2.special, col: e2.special ? '#8b5a2b' : '#3d5a40' });
+    if (a2.v > maxv) maxv = a2.v;
+  }
+  if (rows.length < 2) return '';
+  var h = '<p class="lab" style="margin-top:14px">Votos válidos por circunscripción, ' + year + '</p>';
+  for (i = 0; i < rows.length; i++) {
+    var r = rows[i], w = maxv ? r.v / maxv * 100 : 0, pctCen = cen ? r.v / cen : NaN;
+    h += '<div class="prow" style="cursor:default;grid-template-columns:1fr auto"><span class="pn">' + esc(r.label) + '</span>' +
+      '<span class="pv">' + fmt(r.v) + (isFinite(pctCen) ? ' <small>' + pct(pctCen, pctCen < 0.02 ? 2 : 1) + ' del potencial</small>' : '') + '</span>' +
+      '<span class="bar" style="grid-column:1 / 3"><i style="width:' + w.toFixed(1) + '%;background:' + r.col + '"></i></span></div>';
+  }
+  return h;
+}
 function partBar(acc, el) {
   if (!acc.c || !acc.t) return '';
   var val = acc.v / acc.c * 100, inv = Math.max(0, (acc.t - acc.v)) / acc.c * 100, abs = Math.max(0, 100 - val - inv);
@@ -1344,6 +1435,7 @@ function renderNational() {
   if (!el.special && a.t > 0) h += '<span>nulos <b>' + pct(a.n / a.t) + '</b></span>';
   h += '</div>' + stackBar(el, a) + partBar(a, el);
   if (el.noBlank) h += '<div class="hint" style="color:#8a5a2b">Sin voto en blanco ni nulos en la fuente.</div>';
+  h += circChart(S.year, S.corp);
   var mk = [], kk;
   if (el.noBlank) mk.push('La fuente de esta elección no trae voto en blanco, nulos ni tarjetas no marcadas: los porcentajes y la participación se calculan solo sobre votos por listas.');
   for (kk in (el.missing || {})) mk.push(el.missing[kk]);
